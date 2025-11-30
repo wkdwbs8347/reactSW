@@ -14,21 +14,21 @@ export default function Header() {
 <nav className="flex gap-6 text-purple-500 font-medium">
   <Link
     to="/"
-    className="flex items-center gap-1 p-1 rounded-full hover:bg-purple-100/30 transition transform hover:scale-105 shadow-sm"
+    className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-purple-100/30 transition transform hover:scale-105 shadow-sm"
   >
     <Home size={18} /> 홈
   </Link>
 
   <Link
     to="/login"
-    className="flex items-center gap-1 p-1 rounded-full hover:bg-pink-100/30 transition transform hover:scale-105 shadow-sm"
+    className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-pink-100/30 transition transform hover:scale-105 shadow-sm"
   >
     <Key size={18} /> 로그인
   </Link>
 
   <Link
     to="/join"
-    className="flex items-center gap-1 p-1 rounded-full hover:bg-indigo-100/30 transition transform hover:scale-105 shadow-sm"
+    className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-indigo-100/30 transition transform hover:scale-105 shadow-sm"
   >
     <Edit3 size={18} /> 회원가입
   </Link>

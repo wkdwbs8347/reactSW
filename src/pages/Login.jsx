@@ -40,7 +40,7 @@ export default function Login() {
             type="submit"
             className="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-3 mt-2 rounded-3xl shadow-md hover:scale-105 transition active:scale-95"
           >
-            로그인하기 💜
+            로그인
           </button>
         </form>
       </div>

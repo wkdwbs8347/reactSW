@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import api from "../api/axios"; // 만든 axios 파일 불러오기
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -6,9 +7,8 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/hello");
-        const data = await res.text();
-        setText(data);
+        const res = await api.get("/hello"); // axios.js를 통해 기본경로 설정후 뒷부분 주소만으로 요청
+        setText(res.data); // axios는 자동으로 data에 응답을 담아줌
       } catch (err) {
         console.error("백엔드 요청 실패:", err);
         setText("백엔드 응답 실패");

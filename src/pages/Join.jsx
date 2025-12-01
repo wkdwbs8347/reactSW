@@ -11,7 +11,6 @@ export default function Join() {
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [birth, setBirth] = useState("");
-  // const [phone, setPhone] = useState("");
 
   // 아이디 중복체크
   const [idCheckMessage, setIdCheckMessage] = useState("");
@@ -23,15 +22,62 @@ export default function Join() {
   const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
   const nicknameRef = useRef(null);
 
-  // 이메일 중복체크
-  const [emailCheckMessage, setEmailCheckMessage] = useState("");
-  const [isEmailAvailable, setIsEmailAvailable] = useState(false);
+  // 이메일 인증 관련 상태 (중복체크는 제거)
   const emailRef = useRef(null);
+  const [emailSent, setEmailSent] = useState(false); // 인증번호 입력창 표시 여부
+  const [emailCode, setEmailCode] = useState(""); // 입력된 인증번호
+  const [verified, setVerified] = useState(false); // 이메일 인증 완료 여부
+  const [emailLoading, setEmailLoading] = useState(false); // 요청 시작 -> 로딩 시작
 
-  // 비밀번호 입력 포커스용도
-  const passwordRef = useRef(null);
+  // 포커스용도
+  const loginPwRef = useRef(null);
   const userNameRef = useRef(null);
   const birthRef = useRef(null);
+
+  // ⭐ 인증번호 전송
+  const sendEmailCode = async () => {
+    if (!email) {
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+
+    try {
+      setEmailLoading(true); // 요청 시작 -> 로딩 시작
+      const res = await api.post("/user/emailSend", { email });
+      if (res.status === 200) {
+        alert("인증번호가 전송되었습니다.");
+        setEmailSent(true);
+      }
+    } catch (err) {
+      console.error("이메일 전송 실패:", err);
+      alert("이메일 전송 실패");
+    } finally {
+      setEmailLoading(false); // 요청 끝 -> 로딩 종료
+    }
+  };
+
+  // ⭐ 인증번호 검증
+  const verifyEmailCode = async () => {
+    if (!emailCode) {
+      alert("인증번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const res = await api.post("/user/emailVerify", {
+        email,
+        code: emailCode,
+      });
+
+      if (res.status === 200) {
+        alert("이메일 인증이 완료되었습니다.");
+        setVerified(true);
+      }
+    } catch (err) {
+      console.error("올바르지 않은 인증번호:", err);
+      alert("인증번호가 올바르지 않습니다.");
+    }
+  };
 
   // 아이디 중복 체크
   const checkLoginId = async () => {
@@ -82,7 +128,9 @@ export default function Join() {
     }
 
     try {
-      const res = await api.get("/user/checkNickname", { params: { nickname } });
+      const res = await api.get("/user/checkNickname", {
+        params: { nickname },
+      });
       if (res.data.available) {
         setNicknameCheckMessage("사용 가능한 닉네임입니다.");
         setIsNicknameAvailable(true);
@@ -94,39 +142,6 @@ export default function Join() {
     } catch (err) {
       console.error("닉네임 체크 실패:", err);
       setNicknameCheckMessage("닉네임 중복체크 중 오류가 발생했습니다.");
-    }
-  };
-
-  // 이메일 중복 체크
-  const checkEmail = async () => {
-    setEmailCheckMessage("");
-    setIsEmailAvailable(false);
-
-    if (!email || email.trim().length === 0) {
-      setEmailCheckMessage("이메일은 필수 입력 정보입니다.");
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailCheckMessage("올바른 이메일 형식이 아닙니다.");
-      emailRef.current.focus();
-      return;
-    }
-
-    try {
-      const res = await api.get("/user/checkEmail", { params: { email } });
-      if (res.data.available) {
-        setEmailCheckMessage("사용 가능한 이메일입니다.");
-        setIsEmailAvailable(true);
-      } else {
-        setEmailCheckMessage("이미 사용 중인 이메일입니다.");
-        setIsEmailAvailable(false);
-        emailRef.current.focus();
-      }
-    } catch (err) {
-      console.error("이메일 체크 실패:", err);
-      setEmailCheckMessage("이메일 중복체크 중 오류가 발생했습니다.");
     }
   };
 
@@ -146,15 +161,15 @@ export default function Join() {
       return;
     }
 
-    if (!isEmailAvailable) {
-      alert("이메일 중복체크를 해주세요.");
-      emailRef.current.focus();
+    // ⭐ 이메일 인증 필수
+    if (!verified) {
+      alert("이메일 인증을 완료해야 합니다.");
       return;
     }
 
     if (!loginPw || loginPw.trim().length === 0) {
       alert("비밀번호를 입력해주세요.");
-      passwordRef.current.focus();
+      loginPwRef.current.focus();
       return;
     }
 
@@ -162,7 +177,7 @@ export default function Join() {
       alert("비밀번호가 일치하지 않습니다.");
       setLoginPw("");
       setLoginPwChk("");
-      passwordRef.current.focus();
+      loginPwRef.current.focus();
       return;
     }
 
@@ -190,7 +205,8 @@ export default function Join() {
       }
     } catch (err) {
       console.error("회원가입 실패:", err);
-      const msg = err.response?.data?.message || "서버 오류로 회원가입에 실패했습니다.";
+      const msg =
+        err.response?.data?.message || "서버 오류로 회원가입에 실패했습니다.";
       alert(msg);
     }
   };
@@ -203,6 +219,7 @@ export default function Join() {
         </h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          {/* 아이디 */}
           <input
             ref={loginIdRef}
             type="text"
@@ -212,10 +229,15 @@ export default function Join() {
             onBlur={checkLoginId}
             className="p-2.5 rounded-2xl border shadow-sm"
           />
-          <p className={`text-sm ${isIdAvailable ? "text-green-600" : "text-red-600"}`}>
+          <p
+            className={`text-sm ${
+              isIdAvailable ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {idCheckMessage}
           </p>
 
+          {/* 닉네임 */}
           <input
             ref={nicknameRef}
             type="text"
@@ -225,25 +247,63 @@ export default function Join() {
             onBlur={checkNickname}
             className="p-2.5 rounded-2xl border shadow-sm"
           />
-          <p className={`text-sm ${isNicknameAvailable ? "text-green-600" : "text-red-600"}`}>
+          <p
+            className={`text-sm ${
+              isNicknameAvailable ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {nicknameCheckMessage}
           </p>
 
-          <input
-            ref={emailRef}
-            type="email"
-            placeholder="이메일"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={checkEmail}
-            className="p-2.5 rounded-2xl border shadow-sm"
-          />
-          <p className={`text-sm ${isEmailAvailable ? "text-green-600" : "text-red-600"}`}>
-            {emailCheckMessage}
-          </p>
+          {/* 이메일 + 인증 버튼 (중복체크 제거됨) */}
+          <div className="flex gap-2">
+            <input
+              ref={emailRef}
+              type="email"
+              placeholder="이메일"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setVerified(false);
+              }}
+              className="p-2.5 rounded-2xl border shadow-sm flex-1"
+            />
 
+            <button
+              type="button"
+              onClick={sendEmailCode}
+              disabled={verified || emailLoading}
+              className="bg-purple-400 text-white text-sm rounded-xl px-3 flex items-center gap-1"
+            > {verified ? "인증완료" : emailLoading ? <span className="loading loading-dots loading-lg"></span> : emailSent ? "재요청" : "인증요청"}
+            </button>
+          </div>
+
+          {/* 인증번호 입력칸 (인증 버튼 누르면 등장) */}
+          {emailSent && !verified && (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="인증번호 입력"
+                value={emailCode}
+                maxLength={6}
+                onChange={(e) =>
+                  setEmailCode(e.target.value.replace(/[^0-9]/g, ""))
+                }
+                className="p-2.5 rounded-2xl border shadow-sm flex-1"
+              />
+              <button
+                type="button"
+                onClick={verifyEmailCode}
+                className="bg-green-500 text-white rounded-xl px-3"
+              >
+                확인
+              </button>
+            </div>
+          )}
+
+          {/* 비밀번호 */}
           <input
-            ref={passwordRef}
+            ref={loginPwRef}
             type="password"
             placeholder="비밀번호"
             value={loginPw}
@@ -252,6 +312,7 @@ export default function Join() {
             className="p-2.5 rounded-2xl border shadow-sm"
           />
 
+          {/* 비밀번호 확인 */}
           <input
             type="password"
             placeholder="비밀번호 확인"
@@ -261,6 +322,7 @@ export default function Join() {
             className="p-2.5 rounded-2xl border shadow-sm"
           />
 
+          {/* 이름 */}
           <input
             ref={userNameRef}
             type="text"
@@ -270,6 +332,7 @@ export default function Join() {
             className="p-2.5 rounded-2xl border shadow-sm"
           />
 
+          {/* 생일 */}
           <input
             ref={birthRef}
             type="text"
@@ -280,6 +343,7 @@ export default function Join() {
             className="p-2.5 rounded-2xl border shadow-sm"
           />
 
+          {/* 회원가입 버튼 */}
           <button
             type="submit"
             className="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-3 mt-1 rounded-3xl shadow-md"

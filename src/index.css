@@ -11,3 +11,7 @@ body {
 * {
   @apply text-[#3B2F2F];
 }
+
+input {
+  background-color: #fff;
+}

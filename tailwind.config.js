@@ -1,11 +1,25 @@
+import daisyui from "daisyui";
+import themes from "daisyui/src/colors/themes.js";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}"   // src 내부 모든 js, jsx, ts, tsx 파일 스캔
+    "./src/**/*.{js,jsx,ts,tsx}"
   ],
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [daisyui],
+  daisyui: {
+    themes: [
+      {
+        light: {
+          ...themes["[data-theme=light]"],
+          "input-bg": "transparent",  // 기본 배경 제거
+          "input-text": "#000000",    // 글자색은 검정
+        },
+      },
+    ],
+  },
 }

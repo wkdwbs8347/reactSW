@@ -5,7 +5,7 @@ export default function Home() {
   const [text, setText] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const axiosData = async () => {
       try {
         const res = await api.get("/hello"); // axios.js를 통해 기본경로 설정후 뒷부분 주소만으로 요청
         setText(res.data); // axios는 자동으로 data에 응답을 담아줌
@@ -14,7 +14,7 @@ export default function Home() {
         setText("백엔드 응답 실패");
       }
     };
-    fetchData();
+    axiosData();
   }, []);
 
   return (

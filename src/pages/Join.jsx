@@ -1,9 +1,18 @@
-import { useState, useRef } from "react";
+import { useState, useRef } from "react"; // 상태 저장
 import api from "../api/axios"; // 만든 axios 파일 불러오기
 import { useNavigate } from "react-router-dom"; // 페이지 이동 관리 라이브러리
+import useModal from "../hooks/useModal"; // ⭐ 모달 훅 추가
+import Modal from "../components/modal"; // ⭐ 모달 컴포넌트 추가
 
 export default function Join() {
   const navigate = useNavigate(); // 페이지 이동 관리 함수
+
+  // =======================================================
+  // ⭐ 중앙 모달 (분리된 훅 사용)
+  const { modal, showModal, closeModal } = useModal();
+  // =======================================================
+
+  // 각 상태 초기값 ""
   const [loginId, setLoginId] = useState("");
   const [loginPw, setLoginPw] = useState("");
   const [loginPwChk, setLoginPwChk] = useState("");
@@ -11,55 +20,63 @@ export default function Join() {
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [birth, setBirth] = useState("");
+  const [isComposing, setIsComposing] = useState(false); // 이름 입력창에 숫자, 특수문자 입력방지용
 
-  // 아이디 중복체크
+  // 아이디 중복체크용
   const [idCheckMessage, setIdCheckMessage] = useState("");
   const [isIdAvailable, setIsIdAvailable] = useState(false);
-  const loginIdRef = useRef(null);
 
-  // 닉네임 중복체크
+  // 닉네임 중복체크용
   const [nicknameCheckMessage, setNicknameCheckMessage] = useState("");
   const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
-  const nicknameRef = useRef(null);
 
-  // 이메일 인증 관련 상태 (중복체크는 제거)
-  const emailRef = useRef(null);
-  const [emailSent, setEmailSent] = useState(false); // 인증번호 입력창 표시 여부
-  const [emailCode, setEmailCode] = useState(""); // 입력된 인증번호
-  const [verified, setVerified] = useState(false); // 이메일 인증 완료 여부
-  const [emailLoading, setEmailLoading] = useState(false); // 요청 시작 -> 로딩 시작
+  // 이메일 인증 관련 상태
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailCode, setEmailCode] = useState("");
+  const [verified, setVerified] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
 
-  // 포커스용도
+  // 포커스 관련 ref
+  const loginIdRef = useRef(null);
   const loginPwRef = useRef(null);
+  const emailRef = useRef(null);
+  const emailChkRef = useRef(null);
   const userNameRef = useRef(null);
+  const nicknameRef = useRef(null);
   const birthRef = useRef(null);
 
-  // ⭐ 인증번호 전송
+  // ⭐ 인증번호 전송 처리
   const sendEmailCode = async () => {
     if (!email) {
-      alert("이메일을 입력해주세요.");
+      showModal("이메일을 입력해주세요.", () => {
+        emailRef.current.focus();
+      });
       return;
     }
 
     try {
-      setEmailLoading(true); // 요청 시작 -> 로딩 시작
+      setEmailLoading(true);
       const res = await api.post("/user/emailSend", { email });
       if (res.status === 200) {
-        alert("인증번호가 전송되었습니다.");
+        showModal("인증번호가 전송되었습니다.", () => {
+          emailChkRef.current.focus();
+        });
         setEmailSent(true);
       }
     } catch (err) {
       console.error("이메일 전송 실패:", err);
-      alert("이메일 전송 실패");
+      showModal("이메일 전송 실패");
     } finally {
-      setEmailLoading(false); // 요청 끝 -> 로딩 종료
+      setEmailLoading(false);
     }
   };
 
   // ⭐ 인증번호 검증
   const verifyEmailCode = async () => {
     if (!emailCode) {
-      alert("인증번호를 입력해주세요.");
+      showModal("인증번호를 입력해주세요.", () => {
+        emailChkRef.current.focus();
+      });
       return;
     }
 
@@ -70,12 +87,14 @@ export default function Join() {
       });
 
       if (res.status === 200) {
-        alert("이메일 인증이 완료되었습니다.");
+        showModal("이메일 인증이 완료되었습니다.", () => {
+          loginPwRef.current.focus();
+        });
         setVerified(true);
       }
     } catch (err) {
       console.error("올바르지 않은 인증번호:", err);
-      alert("인증번호가 올바르지 않습니다.");
+      showModal("인증번호가 올바르지 않습니다.");
     }
   };
 
@@ -150,208 +169,285 @@ export default function Join() {
     e.preventDefault();
 
     if (!isIdAvailable) {
-      alert("아이디 중복체크를 해주세요.");
-      loginIdRef.current.focus();
+      showModal("아이디 중복체크를 해주세요.", () => {
+        loginIdRef.current.focus();
+      });
       return;
     }
 
     if (!isNicknameAvailable) {
-      alert("닉네임 중복체크를 해주세요.");
-      nicknameRef.current.focus();
+      showModal("닉네임 중복체크를 해주세요.", () => {
+        nicknameRef.current.focus();
+      });
       return;
     }
 
-    // ⭐ 이메일 인증 필수
     if (!verified) {
-      alert("이메일 인증을 완료해야 합니다.");
+      showModal("이메일 인증을 완료해야 합니다.", () => {
+        emailRef.current.focus();
+      });
       return;
     }
 
     if (!loginPw || loginPw.trim().length === 0) {
-      alert("비밀번호를 입력해주세요.");
-      loginPwRef.current.focus();
+      showModal("비밀번호를 입력해주세요.", () => {
+        loginPwRef.current.focus();
+      });
       return;
     }
 
     if (loginPw !== loginPwChk) {
-      alert("비밀번호가 일치하지 않습니다.");
+      showModal("비밀번호가 일치하지 않습니다.", () => {
+        loginPwRef.current.focus();
+      });
       setLoginPw("");
       setLoginPwChk("");
-      loginPwRef.current.focus();
       return;
     }
 
     if (!userName || userName.trim().length === 0) {
-      alert("이름을 입력해주세요.");
-      userNameRef.current.focus();
+      showModal("이름을 입력해주세요.", () => {
+        userNameRef.current.focus();
+      });
       return;
     }
 
     if (!birth || birth.trim().length !== 8) {
-      alert("생년월일 8자리를 정확히 입력해주세요 (YYYYMMDD).");
-      birthRef.current.focus();
+      showModal("생년월일 8자리를 정확히 입력해주세요 (YYYYMMDD).", () => {
+        birthRef.current.focus();
+      });
       return;
     }
 
     try {
-      const payload = { loginId, loginPw, nickname, email, userName, birth };
-      const res = await api.post("/user/join", payload);
+      const userInput = {
+        loginId,
+        loginPw,
+        nickname,
+        email,
+        userName,
+        birth,
+      };
+
+      const res = await api.post("/user/join", userInput);
 
       if (res.status === 200 || res.status === 201) {
-        alert("회원가입이 완료되었습니다.");
-        navigate("/"); // 홈 화면으로 이동
+        showModal(`${loginId} 님의 회원가입이 완료되었습니다.`, () =>
+          navigate("/")
+        );
       } else {
-        alert("회원가입에 실패했습니다.");
+        showModal("회원가입에 실패했습니다.");
       }
     } catch (err) {
       console.error("회원가입 실패:", err);
       const msg =
         err.response?.data?.message || "서버 오류로 회원가입에 실패했습니다.";
-      alert(msg);
+      showModal(msg);
     }
   };
 
   return (
-    <div className="flex justify-center items-center py-16 px-4">
-      <div className="bg-white/20 p-5 rounded-3xl w-full max-w-sm shadow-md">
-        <h1 className="text-2xl font-bold text-purple-600 mb-5 text-center">
-          회원가입
-        </h1>
+    <>
+      {/* =======================================================
+          ⭐ 중앙 모달 (분리된 컴포넌트)
+      ======================================================== */}
+      <Modal
+        open={modal.open}
+        message={modal.message}
+        onConfirm={modal.onConfirm}
+        onClose={closeModal}
+      />
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          {/* 아이디 */}
-          <input
-            ref={loginIdRef}
-            type="text"
-            placeholder="아이디"
-            value={loginId}
-            onChange={(e) => setLoginId(e.target.value)}
-            onBlur={checkLoginId}
-            className="p-2.5 rounded-2xl border shadow-sm"
-          />
-          <p
-            className={`text-sm ${
-              isIdAvailable ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {idCheckMessage}
-          </p>
+      {/* =======================================================
+           회원가입 UI
+      ======================================================== */}
+      <div className="flex justify-center items-center py-16 px-4">
+        <div className="bg-white/20 p-5 rounded-3xl w-full max-w-sm shadow-md">
+          <h1 className="text-2xl font-bold text-purple-600 mb-5 text-center">
+            회원가입
+          </h1>
 
-          {/* 닉네임 */}
-          <input
-            ref={nicknameRef}
-            type="text"
-            placeholder="닉네임"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            onBlur={checkNickname}
-            className="p-2.5 rounded-2xl border shadow-sm"
-          />
-          <p
-            className={`text-sm ${
-              isNicknameAvailable ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {nicknameCheckMessage}
-          </p>
-
-          {/* 이메일 + 인증 버튼 (중복체크 제거됨) */}
-          <div className="flex gap-2">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            {/* 아이디 */}
             <input
-              ref={emailRef}
-              type="email"
-              placeholder="이메일"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setVerified(false);
-              }}
-              className="p-2.5 rounded-2xl border shadow-sm flex-1"
+              ref={loginIdRef}
+              type="text"
+              placeholder="아이디 │ 영문 / 숫자"
+              value={loginId}
+              maxLength={20}
+              onChange={(e) =>
+                setLoginId(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))
+              }
+              onBlur={checkLoginId}
+              className="p-2.5 rounded-2xl border shadow-sm"
             />
+            <div className="h-5">
+              <p
+                className={`text-sm ${
+                  isIdAvailable ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {idCheckMessage}
+              </p>
+            </div>
 
-            <button
-              type="button"
-              onClick={sendEmailCode}
-              disabled={verified || emailLoading}
-              className="bg-purple-400 text-white text-sm rounded-xl px-3 flex items-center gap-1"
-            > {verified ? "인증완료" : emailLoading ? <span className="loading loading-dots loading-lg"></span> : emailSent ? "재요청" : "인증요청"}
-            </button>
-          </div>
+            {/* 닉네임 */}
+            <input
+              ref={nicknameRef}
+              type="text"
+              placeholder="닉네임 │ 한글 / 영문 / 숫자"
+              value={nickname}
+              maxLength={10}
+              onCompositionStart={() => setIsComposing(true)} // 한글 조합 시작
+              onCompositionEnd={(e) => {
+                setIsComposing(false);
+                // 조합이 끝난 문자열만 필터링
+                setNickname(e.target.value.replace(/[^가-힣a-zA-Z0-9]/g, ""));
+              }}
+              onChange={(e) => {
+                // 조합 중이면 필터링하지 않고 그대로 업데이트
+                if (!isComposing) {
+                  setNickname(e.target.value.replace(/[^가-힣a-zA-Z0-9]/g, ""));
+                } else {
+                  setNickname(e.target.value);
+                }
+              }}
+              onBlur={checkNickname}
+              className="p-2.5 rounded-2xl border shadow-sm"
+            />
+            <div className="h-5">
+              <p
+                className={`text-sm ${
+                  isNicknameAvailable ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {nicknameCheckMessage}
+              </p>
+            </div>
 
-          {/* 인증번호 입력칸 (인증 버튼 누르면 등장) */}
-          {emailSent && !verified && (
+            {/* 이메일 + 인증 버튼 */}
             <div className="flex gap-2">
               <input
-                type="text"
-                placeholder="인증번호 입력"
-                value={emailCode}
-                maxLength={6}
-                onChange={(e) =>
-                  setEmailCode(e.target.value.replace(/[^0-9]/g, ""))
-                }
+                ref={emailRef}
+                type="email"
+                placeholder="이메일"
+                value={email}
+                maxLength={40}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setVerified(false);
+                }}
                 className="p-2.5 rounded-2xl border shadow-sm flex-1"
               />
+
               <button
                 type="button"
-                onClick={verifyEmailCode}
-                className="bg-green-500 text-white rounded-xl px-3"
+                onClick={sendEmailCode}
+                disabled={verified || emailLoading}
+                className="bg-purple-400 text-white text-sm rounded-xl px-3 flex items-center gap-1"
               >
-                확인
+                {verified ? (
+                  "인증완료"
+                ) : emailLoading ? (
+                  <span className="loading loading-dots loading-lg"></span>
+                ) : emailSent ? (
+                  "재요청"
+                ) : (
+                  "인증요청"
+                )}
               </button>
             </div>
-          )}
 
-          {/* 비밀번호 */}
-          <input
-            ref={loginPwRef}
-            type="password"
-            placeholder="비밀번호"
-            value={loginPw}
-            maxLength="20"
-            onChange={(e) => setLoginPw(e.target.value)}
-            className="p-2.5 rounded-2xl border shadow-sm"
-          />
+            {/* 인증번호 입력칸 */}
+            {emailSent && !verified && (
+              <div className="flex gap-2">
+                <input
+                  ref={emailChkRef}
+                  type="text"
+                  placeholder="인증번호 입력"
+                  value={emailCode}
+                  maxLength={6}
+                  onChange={(e) =>
+                    setEmailCode(e.target.value.replace(/[^0-9]/g, ""))
+                  }
+                  className="p-2.5 rounded-2xl border shadow-sm flex-1"
+                />
+                <button
+                  type="button"
+                  onClick={verifyEmailCode}
+                  className="bg-green-500 text-white rounded-xl px-3"
+                >
+                  확인
+                </button>
+              </div>
+            )}
 
-          {/* 비밀번호 확인 */}
-          <input
-            type="password"
-            placeholder="비밀번호 확인"
-            value={loginPwChk}
-            maxLength="20"
-            onChange={(e) => setLoginPwChk(e.target.value)}
-            className="p-2.5 rounded-2xl border shadow-sm"
-          />
+            {/* 비밀번호 */}
+            <input
+              ref={loginPwRef}
+              type="password"
+              placeholder="비밀번호"
+              value={loginPw}
+              maxLength={20}
+              onChange={(e) => setLoginPw(e.target.value)}
+              className="p-2.5 rounded-2xl border shadow-sm"
+            />
 
-          {/* 이름 */}
-          <input
-            ref={userNameRef}
-            type="text"
-            placeholder="이름"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            className="p-2.5 rounded-2xl border shadow-sm"
-          />
+            {/* 비밀번호 확인 */}
+            <input
+              type="password"
+              placeholder="비밀번호 확인"
+              value={loginPwChk}
+              maxLength={20}
+              onChange={(e) => setLoginPwChk(e.target.value)}
+              className="p-2.5 rounded-2xl border shadow-sm"
+            />
 
-          {/* 생일 */}
-          <input
-            ref={birthRef}
-            type="text"
-            placeholder="생년월일 8자리 (YYYYMMDD)"
-            value={birth}
-            maxLength={8}
-            onChange={(e) => setBirth(e.target.value.replace(/[^0-9]/g, ""))}
-            className="p-2.5 rounded-2xl border shadow-sm"
-          />
+            {/* 이름 */}
+            <input
+              ref={userNameRef}
+              type="text"
+              placeholder="이름"
+              value={userName}
+              maxLength={20}
+              onCompositionStart={() => setIsComposing(true)} // 한글 조합 시작
+              onCompositionEnd={(e) => {
+                setIsComposing(false);
+                // 조합이 끝난 문자열만 필터링
+                setUserName(e.target.value.replace(/[^가-힣a-zA-Z]/g, ""));
+              }}
+              onChange={(e) => {
+                // 조합 중이면 필터링하지 않고 그대로 업데이트
+                if (!isComposing) {
+                  setUserName(e.target.value.replace(/[^가-힣a-zA-Z]/g, ""));
+                } else {
+                  setUserName(e.target.value);
+                }
+              }}
+              className="p-2.5 rounded-2xl border shadow-sm"
+            />
 
-          {/* 회원가입 버튼 */}
-          <button
-            type="submit"
-            className="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-3 mt-1 rounded-3xl shadow-md"
-          >
-            회원가입
-          </button>
-        </form>
+            {/* 생일 */}
+            <input
+              ref={birthRef}
+              type="text"
+              placeholder="생년월일 8자리 (YYYYMMDD)"
+              value={birth}
+              maxLength={8}
+              onChange={(e) => setBirth(e.target.value.replace(/[^0-9]/g, ""))}
+              className="p-2.5 rounded-2xl border shadow-sm"
+            />
+
+            {/* 회원가입 버튼 */}
+            <button
+              type="submit"
+              className="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-3 mt-1 rounded-3xl shadow-md"
+            >
+              회원가입
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

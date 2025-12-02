@@ -2,7 +2,7 @@ import { useState, useRef } from "react"; // 상태 저장
 import api from "../api/axios"; // 만든 axios 파일 불러오기
 import { useNavigate } from "react-router-dom"; // 페이지 이동 관리 라이브러리
 import useModal from "../hooks/useModal"; // ⭐ 모달 훅 추가
-import Modal from "../components/modal"; // ⭐ 모달 컴포넌트 추가
+import Modal from "../components/Modal"; // ⭐ 모달 컴포넌트 추가
 
 export default function Join() {
   const navigate = useNavigate(); // 페이지 이동 관리 함수

@@ -4,14 +4,19 @@
 
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
-   
+  font-family: 'Cafe24Surround'; /* 사용할 폰트의 이름을 정의 */
 }
 
-* {
+@font-face {
+  font-family: 'Cafe24Surround'; /* 사용할 폰트의 이름을 정의 */
+  src: url('./font/Cafe24Ssurround-v2.0.otf'); /* 폰트 파일의 위치 */
+}
+
+@font-face {
+  font-family: 'Cafe24Surround';
+  src: url('./font/Cafe24Ssurround-v2.0.ttf');
+}
+
+/* * {
   @apply text-[#3B2F2F];
-}
-
-input {
-  background-color: #fff;
-}
+}  */

@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import api from "../api/axios"; // axios 불러오기
 import { useNavigate } from "react-router-dom"; // 페이지 이동 관리 라이브러리
 import useModal from "../hooks/useModal"; // ⭐ modal hook추가
-import Modal from "../components/modal"; // ⭐ modal 컴포넌트 추가
+import Modal from "../components/Modal"; // ⭐ modal 컴포넌트 추가
 
 export default function Login() {
   const navigate = useNavigate(); // 페이지 이동 관리 함수
@@ -46,7 +46,8 @@ export default function Login() {
       ) {
         showModal("로그인 성공", () => navigate("/"));
       } else {
-        showModal("아이디 또는 비밀번호가 일치하지 않습니다."); 
+        showModal("아이디 또는 비밀번호가 일치하지 않습니다.", () => loginIdRef.current.focus());
+        setLoginPw("");
       }
     } catch (err) {
       console.error("로그인 실패:", err);

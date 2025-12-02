@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Home, Key, Edit3 } from "lucide-react";
+import { LivelyCuteHouse } from './LivelyCuteHouse';
 
 export default function Header() {
   return (
@@ -8,7 +9,7 @@ export default function Header() {
         to="/"
         className="font-extrabold text-2xl text-purple-600 hover:text-pink-500 transition transform hover:scale-105"
       >
-        Sweet Home 🏡
+        Sweet Home <LivelyCuteHouse />
       </Link>
 
 <nav className="flex gap-6 text-purple-500 font-medium">

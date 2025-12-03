@@ -1,27 +1,6 @@
-import { useState } from "react";
+import { useContext } from "react";
+import { ModalContext } from "../context/ModalContext.js";
 
 export default function useModal() {
-  const [modal, setModal] = useState({
-    open: false,
-    message: "",
-    onConfirm: null,
-  });
-
-  const showModal = (message, onConfirm = null) => {
-    setModal({
-      open: true,
-      message,
-      onConfirm,
-    });
-  };
-
-  const closeModal = () => {
-    setModal({
-      open: false,
-      message: "",
-      onConfirm: null,
-    });
-  };
-
-  return { modal, showModal, closeModal };
+  return useContext(ModalContext);
 }

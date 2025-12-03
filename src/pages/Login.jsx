@@ -1,13 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import api from "../api/axios"; // axios 불러오기
 import { useNavigate } from "react-router-dom"; // 페이지 이동 관리 라이브러리
 import useModal from "../hooks/useModal"; // ⭐ modal hook추가
 import Modal from "../components/Modal"; // ⭐ modal 컴포넌트 추가
-
+import { LoginChkContext } from "../context/LoginChkContext"; // 로그인 상태 저장
 export default function Login() {
   const navigate = useNavigate(); // 페이지 이동 관리 함수
   const { modal, showModal, closeModal } = useModal(); // 모달 훅
-
+  const { setIsLogin, setterLoginId } = useContext(LoginChkContext);
   const [loginId, setLoginId] = useState(""); // 아이디
   const [loginPw, setLoginPw] = useState(""); // 비밀번호
 
@@ -44,9 +44,13 @@ export default function Login() {
         (res.status === 200 || res.status === 201) &&
         res.data.loginChk === true
       ) {
+        setIsLogin(true);
+        setterLoginId(loginId);
         showModal("로그인 성공", () => navigate("/"));
       } else {
-        showModal("아이디 또는 비밀번호가 일치하지 않습니다.", () => loginIdRef.current.focus());
+        showModal("아이디 또는 비밀번호가 일치하지 않습니다.", () =>
+          loginIdRef.current.focus()
+        );
         setLoginPw("");
       }
     } catch (err) {

@@ -1,65 +1,91 @@
 import { useEffect } from "react";
-export default function Modal({ open, message, onConfirm, onClose }) {
-  {
-    /*
-    showModal()을 호출하면 open이 true가 되면서 모달창이 뜨고
-    확인버튼 누르면 버튼클릭 이벤트로 onClose()가 호출되는데 onClose() 안에는 모달 훅의
-    const closeModal = () => {
-      setModal({
-        open: false,
-        message: "",
-        onConfirm: null,
-      });
-    }; 가 들어 있다
-    */
-  }
-  // ESC 또는 Enter 키로 모달 닫기
+import useModal from "../hooks/useModal.js";
+
+/**
+ * 전역 Modal 컴포넌트 (알림/확인용)
+ *
+ * - 앱 전체에서 단일 ModalProvider로 상태 공유
+ * - open, message, onConfirm, closeModal 훅 사용
+ * - ESC / Enter 키, Backdrop 클릭, 확인 버튼으로 모달 닫기 가능
+ *
+ * 사용 예시:
+ * const { showModal } = useModal();
+ * showModal("로그아웃 되었습니다.", () => navigate("/"));
+ */
+export default function Modal() {
+  // 전역 훅으로 모달 상태와 닫기 함수 가져오기
+  const { modal, closeModal } = useModal();
+  const { open, message, onConfirm } = modal;
+
+  // --------------------------
+  // 키보드 이벤트 처리 (ESC, Enter)
+  // --------------------------
   useEffect(() => {
+    // 모달이 열려있을 때만 키 이벤트 처리
     const handleKey = (e) => {
       if ((e.key === "Escape" || e.key === "Enter") && open) {
-        e.preventDefault(); // 엔터키 눌렀을때 다시 submit 이벤트 발생하는거 막음
-        onConfirm();  // Enter이나 Esc로 꺼도 포커스 이동
-        onClose();
+        e.preventDefault(); // Enter 눌러서 form submit되는 걸 막음
+
+        // Enter 또는 ESC 키 눌렀을 때 onConfirm 실행
+        if (onConfirm) onConfirm();
+
+        // 모달 닫기
+        closeModal();
       }
     };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [open, onConfirm, onClose]);
 
+    window.addEventListener("keydown", handleKey);
+
+    // Cleanup: 컴포넌트 언마운트 시 이벤트 제거
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [open, onConfirm, closeModal]);
+
+  // 모달이 닫혀있으면 렌더링하지 않음
   if (!open) return null;
 
   return (
     <>
-      {/* Backdrop */}
+      {/* --------------------------
+          Backdrop
+          - 모달 뒤 검은 반투명 배경
+          - 클릭하면 모달 닫기
+      -------------------------- */}
       <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-        onClick={onClose}
+        className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40"
+        onClick={closeModal}
       />
 
-      {/* Modal Box */}
+      {/* --------------------------
+          Modal Box
+          - 메시지 출력
+          - 확인 버튼
+      -------------------------- */}
       <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-[90%] p-6 text-center transform animate-scaleIn">
+        <div className="bg-white rounded-3xl max-w-sm w-[90%] p-6 text-center animate-scaleIn">
+          {/* 모달 메시지 */}
           <p className="text-gray-800 text-base font-medium mb-4">{message}</p>
 
-          <div className="flex justify-center gap-4">
-            <button
-              className="px-5 py-2 rounded-xl bg-purple-400 hover:bg-fuchsia-500 text-white font-semibold transition"
-              onClick={() => {
-                onClose();
-                if (onConfirm) onConfirm();
-              }}
-            >
-              확인
-            </button>
-          </div>
+          {/* 확인 버튼 */}
+          <button
+            className="px-5 py-2 rounded-xl bg-purple-400 hover:bg-fuchsia-500 text-white font-semibold transition"
+            onClick={() => {
+              if (onConfirm) onConfirm(); // onConfirm 콜백 실행
+              closeModal();    // 모달 닫기
+            }}
+          >
+            확인
+          </button>
         </div>
       </div>
 
-      {/* 애니메이션 */}
+      {/* --------------------------
+          모달 등장 애니메이션
+      -------------------------- */}
       <style jsx>{`
         .animate-scaleIn {
           animation: scaleIn 0.2s ease-out forwards;
         }
+
         @keyframes scaleIn {
           0% {
             transform: scale(0.8);

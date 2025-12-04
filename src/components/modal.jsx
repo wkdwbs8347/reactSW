@@ -81,7 +81,7 @@ export default function Modal() {
       {/* --------------------------
           모달 등장 애니메이션
       -------------------------- */}
-      <style jsx>{`
+      <style>{`
         .animate-scaleIn {
           animation: scaleIn 0.2s ease-out forwards;
         }

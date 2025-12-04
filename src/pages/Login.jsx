@@ -4,15 +4,22 @@ import { useNavigate } from "react-router-dom"; // 페이지 이동 관리 라�
 import useModal from "../hooks/useModal"; // ⭐ modal hook추가
 import Modal from "../components/Modal"; // ⭐ modal 컴포넌트 추가
 import { LoginChkContext } from "../context/LoginChkContext"; // 로그인 상태 저장
+import FindIdModal from "../components/FindIdModal"; // 아이디 찾기 모달
+import FindPwModal from "../components/FindPwModal"; // 비밀번호 찾기 모달
+
 export default function Login() {
   const navigate = useNavigate(); // 페이지 이동 관리 함수
   const { modal, showModal, closeModal } = useModal(); // 모달 훅
-  const { setIsLogin, setterLoginId } = useContext(LoginChkContext);
+  const { setIsLogin, setterLoginId, setLoginUserNickname } = useContext(LoginChkContext);
   const [loginId, setLoginId] = useState(""); // 아이디
   const [loginPw, setLoginPw] = useState(""); // 비밀번호
 
   const loginIdRef = useRef(null);
   const loginPwRef = useRef(null);
+
+  // 아이디, 비밀번호 찾기 모달 상태
+  const [showFindId, setShowFindId] = useState(false);
+  const [showFindPw, setShowFindPw] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // 폼 제출시 브라우저가 페이지 새로고침 하려는걸 막음 (비동기 처리를 위함)
@@ -33,12 +40,9 @@ export default function Login() {
 
     try {
       // 백엔드 서버로 보낼 데이터 / 유저가 입력한 아이디와 비밀번호
-      const userInput = {
-        loginId,
-        loginPw,
-      };
+      const userInput = { loginId, loginPw };
 
-      // 아이디와 패스워드를 백엔드 서버로 전송 / 서버에서 검증 후 boolean 타입 데이터 반환
+      // 아이디와 패스워드를 백엔드 서버로 전송 / 서버에서 검증 후 loginChk: true or false 데이터 반환
       const res = await api.post("/user/login", userInput);
       if (
         (res.status === 200 || res.status === 201) &&
@@ -46,6 +50,7 @@ export default function Login() {
       ) {
         setIsLogin(true);
         setterLoginId(loginId);
+        setLoginUserNickname(res.data.loginUser.nickname);
         showModal("로그인 성공", () => navigate("/"));
       } else {
         showModal("아이디 또는 비밀번호가 일치하지 않습니다.", () =>
@@ -69,6 +74,20 @@ export default function Login() {
         onConfirm={modal.onConfirm}
         onClose={closeModal}
       />
+      {showFindId && (
+        <FindIdModal
+          close={() => setShowFindId(false)}
+          setLoginId={setLoginId}
+          showGlobalModal={(msg, cb) => showModal(msg, cb)}
+        />
+      )}
+      {showFindPw && (
+        <FindPwModal
+          close={() => setShowFindPw(false)}
+          setLoginPw={setLoginPw}
+          showGlobalModal={(msg, cb) => showModal(msg, cb)}
+        />
+      )}
       <div className="flex justify-center items-center py-16 px-4">
         <div className="bg-white/20 backdrop-blur-sm p-6 rounded-3xl w-full max-w-md shadow-md">
           <h1 className="text-3xl font-bold text-purple-600 mb-6 text-center">
@@ -104,6 +123,35 @@ export default function Login() {
               로그인
             </button>
           </form>
+          <div className="flex justify-center gap-4 mt-4 text-sm text-purple-700">
+            <button
+              type="button"
+              onClick={() => setShowFindId(true)}
+              className="relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1px] after:bg-purple-500 hover:after:w-full after:transition-all after:duration-300"
+            >
+              아이디 찾기
+            </button>
+
+            <span className="text-gray-400">|</span>
+
+            <button
+              type="button"
+              onClick={() => setShowFindPw(true)}
+              className="relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1px] after:bg-purple-500 hover:after:w-full after:transition-all after:duration-300"
+            >
+              비밀번호 찾기
+            </button>
+
+            <span className="text-gray-400">|</span>
+
+            <button
+              type="button"
+              onClick={() => navigate("/join")}
+              className="relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1px] after:bg-purple-500 hover:after:w-full after:transition-all after:duration-300"
+            >
+              회원가입
+            </button>
+          </div>
         </div>
       </div>
     </>

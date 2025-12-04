@@ -20,7 +20,7 @@ export default function Join() {
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [birth, setBirth] = useState("");
-  const [isComposing, setIsComposing] = useState(false); // 이름 입력창에 숫자, 특수문자 입력방지용
+  const [isComposing, setIsComposing] = useState(false); // 이름 입력창에 숫자, 특수문자 입력방지 필터링 한글 입력시 처리
 
   // 아이디 중복체크용
   const [idCheckMessage, setIdCheckMessage] = useState("");
@@ -110,7 +110,6 @@ export default function Join() {
 
     if (loginId.trim().length < 4) {
       setIdCheckMessage("아이디는 4글자 이상이어야 합니다.");
-      loginIdRef.current.focus();
       return;
     }
 
@@ -122,7 +121,6 @@ export default function Join() {
       } else {
         setIdCheckMessage("이미 사용 중인 아이디입니다.");
         setIsIdAvailable(false);
-        loginIdRef.current.focus();
       }
     } catch (err) {
       console.error("아이디 체크 실패:", err);
@@ -142,7 +140,6 @@ export default function Join() {
 
     if (nickname.trim().length < 2) {
       setNicknameCheckMessage("닉네임은 2글자 이상이어야 합니다.");
-      nicknameRef.current.focus();
       return;
     }
 
@@ -156,7 +153,6 @@ export default function Join() {
       } else {
         setNicknameCheckMessage("이미 사용 중인 닉네임입니다.");
         setIsNicknameAvailable(false);
-        nicknameRef.current.focus();
       }
     } catch (err) {
       console.error("닉네임 체크 실패:", err);
@@ -272,9 +268,13 @@ export default function Join() {
             <input
               ref={loginIdRef}
               type="text"
-              placeholder="아이디 │ 영문 / 숫자"
+              placeholder="아이디"
               value={loginId}
               maxLength={20}
+              onFocus={() => {
+                setIdCheckMessage("영문 / 숫자 입력가능");
+                setIsIdAvailable(null); // 색상 초기화 위해 null 사용
+              }}
               onChange={(e) =>
                 setLoginId(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))
               }
@@ -284,7 +284,11 @@ export default function Join() {
             <div className="h-5">
               <p
                 className={`text-sm ${
-                  isIdAvailable ? "text-green-600" : "text-red-600"
+                  isIdAvailable === null
+                    ? "text-gray-500"
+                    : isIdAvailable
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
                 {idCheckMessage}
@@ -295,9 +299,13 @@ export default function Join() {
             <input
               ref={nicknameRef}
               type="text"
-              placeholder="닉네임 │ 한글 / 영문 / 숫자"
+              placeholder="닉네임"
               value={nickname}
               maxLength={10}
+              onFocus={() => {
+                setNicknameCheckMessage("한글 / 영문 / 숫자 입력가능");
+                setIsNicknameAvailable(null); // 색상 초기화 위해 null 사용
+              }}
               onCompositionStart={() => setIsComposing(true)} // 한글 조합 시작
               onCompositionEnd={(e) => {
                 setIsComposing(false);
@@ -318,7 +326,11 @@ export default function Join() {
             <div className="h-5">
               <p
                 className={`text-sm ${
-                  isNicknameAvailable ? "text-green-600" : "text-red-600"
+                  isNicknameAvailable === null
+                    ? "text-gray-500"
+                    : isNicknameAvailable
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
                 {nicknameCheckMessage}

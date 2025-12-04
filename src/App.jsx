@@ -5,6 +5,7 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Logout from "./pages/Logout.jsx";
 import Join from "./pages/Join.jsx";
+import MyPage from "./pages/MyPage.jsx";
 
 // 공통 컴포넌트 import
 import Header from "./components/Header.jsx";
@@ -52,6 +53,7 @@ function App() {
                 {/* 경로별 페이지 연결 */}
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/mypage" element={<MyPage />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/join" element={<Join />} />
               </Routes>

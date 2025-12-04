@@ -9,7 +9,8 @@ import { LoginChkContext } from "../context/LoginChkContext";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { isLogin, setIsLogin, loginId, setterLoginId } = useContext(LoginChkContext);
+  const { isLogin, setIsLogin, loginUserNickname, setLoginUserNickname } =
+    useContext(LoginChkContext);
   // useModal 훅 사용
   const { modal, showModal, closeModal } = useModal();
 
@@ -18,11 +19,11 @@ export default function Header() {
     e.preventDefault();
 
     try {
-      const res = await api.post("/user/logout");
+      const res = await api.post("/user/doLogout");
 
       if (res.data.success) {
         setIsLogin(false);
-        setterLoginId("");
+        setLoginUserNickname("");
 
         // onConfirm에는 모달 확인 버튼 클릭 시 실행할 함수(페이지 이동)를 넣습니다.
         showModal("로그아웃 되었습니다.", () => {
@@ -51,7 +52,7 @@ export default function Header() {
         >
           Sweet Home <LivelyCuteHouse />
         </Link>
-        {isLogin && <span>안녕하세요, {loginId}님!</span>}
+        {isLogin && <span>안녕하세요, {loginUserNickname}님!</span>}
         <nav className="flex gap-6 text-purple-500 font-medium">
           <Link
             to="/"
@@ -78,13 +79,21 @@ export default function Header() {
           )}
           {/* 로그아웃 버튼: onClick 이벤트로 POST 요청 실행 */}
           {isLogin && (
-            <Link
-              to="#" // 라우팅을 막기 위해 '#' 사용
-              onClick={handleLogout} // ⬅️ 클릭 시 로그아웃 로직 실행
-              className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-pink-100/30 transition transform hover:scale-105 shadow-sm"
-            >
-              <Key size={18} /> 로그아웃
-            </Link>
+            <>
+              <Link
+                to="/mypage"
+                className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-indigo-100/30 transition transform hover:scale-105 shadow-sm"
+              >
+                <Edit3 size={18} /> 마이페이지
+              </Link>
+              <Link
+                to="#" // 라우팅을 막기 위해 '#' 사용
+                onClick={handleLogout} // ⬅️ 클릭 시 로그아웃 로직 실행
+                className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-pink-100/30 transition transform hover:scale-105 shadow-sm"
+              >
+                <Key size={18} /> 로그아웃
+              </Link>
+            </>
           )}
         </nav>
       </header>

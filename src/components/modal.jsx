@@ -60,14 +60,14 @@ export default function Modal() {
           - 메시지 출력
           - 확인 버튼
       -------------------------- */}
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div className="bg-white rounded-3xl max-w-sm w-[90%] p-6 text-center animate-scaleIn">
+      <div className={`fixed inset-0 flex items-center justify-center z-[10000]`}>
+        <div className="bg-base-100 rounded-3xl max-w-sm w-[90%] p-6 text-center shadow-xl animate-scaleIn">
           {/* 모달 메시지 */}
-          <p className="text-gray-800 text-base font-medium mb-4">{message}</p>
+          <p className="text-neutral text-base font-medium mb-4">{message}</p>
 
           {/* 확인 버튼 */}
           <button
-            className="px-5 py-2 rounded-xl bg-purple-400 hover:bg-fuchsia-500 text-white font-semibold transition"
+            className="btn btn-primary rounded-xl"
             onClick={() => {
               if (onConfirm) onConfirm(); // onConfirm 콜백 실행
               closeModal();    // 모달 닫기

@@ -30,20 +30,11 @@ function App() {
     <LoginChkProvider>
       {/* LoginChkProvider: 앱 전체에서 로그인 상태 공유 가능 */}
       <Router>
-        {/* Router: SPA 라우팅을 위해 브라우저 라우터 적용 */} 
+        {/* Router: SPA 라우팅을 위해 브라우저 라우터 적용 */}
         <ModalProvider>
-        {/* ModalProvider: 앱 전체에서 모달 상태 공유 가능 */}
+          {/* ModalProvider: 앱 전체에서 모달 상태 공유 가능 */}
           {/* 전체 페이지 레이아웃 */}
-          <div
-            className="min-h-screen flex flex-col"
-            style={{
-              backgroundImage:
-                "url('/images/Gemini_Generated_Image_h2232ih2232ih223 (1)-1024x576.png')",
-              backgroundSize: "cover", // 배경 이미지 전체 영역 채우기
-              backgroundPosition: "center", // 이미지 가운데 정렬
-              backgroundRepeat: "no-repeat", // 반복 방지
-            }}
-          >
+          <div className="min-h-screen flex flex-col text-neutral bg-gradient-to-b from-primary/30 via-base-100/20 to-secondary/30">
             {/* Header: 상단 네비게이션 */}
             <Header />
 

@@ -1,79 +1,72 @@
 import { useState, useRef, useContext } from "react";
-import api from "../api/axios"; // axios 불러오기
-import { useNavigate } from "react-router-dom"; // 페이지 이동 관리 라이브러리
-import useModal from "../hooks/useModal"; // ⭐ modal hook추가
-import Modal from "../components/Modal"; // ⭐ modal 컴포넌트 추가
-import { LoginChkContext } from "../context/LoginChkContext"; // 로그인 상태 저장
-import FindIdModal from "../components/FindIdModal"; // 아이디 찾기 모달
-import FindPwModal from "../components/FindPwModal"; // 비밀번호 찾기 모달
+import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
+import useModal from "../hooks/useModal";
+import Modal from "../components/Modal";
+import { LoginChkContext } from "../context/LoginChkContext";
+import FindIdModal from "../components/FindIdModal";
+import FindPwModal from "../components/FindPwModal";
 
 export default function Login() {
-  const navigate = useNavigate(); // 페이지 이동 관리 함수
-  const { modal, showModal, closeModal } = useModal(); // 모달 훅
-  const { setIsLogin, setterLoginId, setLoginUserNickname } = useContext(LoginChkContext);
-  const [loginId, setLoginId] = useState(""); // 아이디
-  const [loginPw, setLoginPw] = useState(""); // 비밀번호
+  const navigate = useNavigate();
+  const { modal, showModal, closeModal } = useModal();
+  const { setIsLogin, setterLoginId, setLoginUserNickname } =
+    useContext(LoginChkContext);
 
+  // 아이디, 비밀번호
+  const [loginId, setLoginId] = useState("");
+  const [loginPw, setLoginPw] = useState("");
+
+  // DOM 접근용
   const loginIdRef = useRef(null);
   const loginPwRef = useRef(null);
 
-  // 아이디, 비밀번호 찾기 모달 상태
+  // 아이디/비밀번호 찾기 모달
   const [showFindId, setShowFindId] = useState(false);
   const [showFindPw, setShowFindPw] = useState(false);
 
+  // 로그인 처리
   const handleSubmit = async (e) => {
-    e.preventDefault(); // 폼 제출시 브라우저가 페이지 새로고침 하려는걸 막음 (비동기 처리를 위함)
+    e.preventDefault();
 
-    // 아이디 비밀번호 입력 안했을때 검증
     if (!loginId) {
-      showModal("아이디를 입력해주세요.", () => {
-        loginIdRef.current.focus();
-      });
+      showModal("아이디를 입력해주세요.", () => loginIdRef.current.focus());
       return;
     }
     if (!loginPw) {
-      showModal("비밀번호를 입력해주세요.", () => {
-        loginPwRef.current.focus();
-      });
+      showModal("비밀번호를 입력해주세요.", () => loginPwRef.current.focus());
       return;
     }
 
     try {
-      // 백엔드 서버로 보낼 데이터 / 유저가 입력한 아이디와 비밀번호
-      const userInput = { loginId, loginPw };
+      const res = await api.post("/user/login", { loginId, loginPw });
 
-      // 아이디와 패스워드를 백엔드 서버로 전송 / 서버에서 검증 후 loginChk: true or false 데이터 반환
-      const res = await api.post("/user/login", userInput);
-      if (
-        (res.status === 200 || res.status === 201) &&
-        res.data.loginChk === true
-      ) {
+      if (res.data.loginChk === true) {
         setIsLogin(true);
         setterLoginId(loginId);
         setLoginUserNickname(res.data.loginUser.nickname);
-        showModal("로그인 성공", () => navigate("/"));
+        showModal("로그인 성공!", () => navigate("/"));
       } else {
-        showModal("아이디 또는 비밀번호가 일치하지 않습니다.", () =>
-          loginIdRef.current.focus()
-        );
+        showModal("아이디 또는 비밀번호가 일치하지 않습니다.");
         setLoginPw("");
       }
     } catch (err) {
-      console.error("로그인 실패:", err);
-      const msg =
-        err.response?.data?.message || "서버 오류로 로그인에 실패했습니다.";
-      showModal(msg);
+      console.error(err);
+      showModal("서버 오류로 로그인 실패");
     }
   };
 
   return (
     <>
+      {/* 공용 모달 */}
       <Modal
         open={modal.open}
         message={modal.message}
         onConfirm={modal.onConfirm}
         onClose={closeModal}
       />
+
+      {/* 아이디 찾기 모달 */}
       {showFindId && (
         <FindIdModal
           close={() => setShowFindId(false)}
@@ -81,6 +74,8 @@ export default function Login() {
           showGlobalModal={(msg, cb) => showModal(msg, cb)}
         />
       )}
+
+      {/* 비밀번호 찾기 모달 */}
       {showFindPw && (
         <FindPwModal
           close={() => setShowFindPw(false)}
@@ -88,11 +83,12 @@ export default function Login() {
           showGlobalModal={(msg, cb) => showModal(msg, cb)}
         />
       )}
+
+      {/* 로그인 폼 */}
       <div className="flex justify-center items-center py-16 px-4">
-        <div className="bg-white/20 backdrop-blur-sm p-6 rounded-3xl w-full max-w-md shadow-md">
-          <h1 className="text-3xl font-bold text-purple-600 mb-6 text-center">
-            로그인
-          </h1>
+        <div className="bg-base-100 p-6 rounded-3xl w-full max-w-md shadow-md text-neutral">
+          {/* 타이틀 */}
+          <h1 className="text-3xl font-bold mb-6 text-center">로그인</h1>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* 아이디 */}
@@ -102,7 +98,7 @@ export default function Login() {
               placeholder="아이디"
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
-              className="p-3 rounded-2xl border border-purple-200 shadow-sm focus:ring-2 focus:ring-purple-300 transition"
+              className="p-3 rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
 
             {/* 비밀번호 */}
@@ -112,42 +108,48 @@ export default function Login() {
               placeholder="비밀번호"
               value={loginPw}
               onChange={(e) => setLoginPw(e.target.value)}
-              className="p-3 rounded-2xl border border-purple-200 shadow-sm focus:ring-2 focus:ring-purple-300 transition"
+              className="p-3 rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
 
             {/* 로그인 버튼 */}
             <button
               type="submit"
-              className="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-3 mt-2 rounded-3xl shadow-md hover:scale-105 transition active:scale-95"
+              className="
+    px-6 py-3
+    mt-2
+    bg-primary text-neutral
+    rounded-2xl
+    font-semibold
+    shadow-lg
+    transition
+    transform
+    hover:scale-105
+    hover:bg-primary-focus
+  "
             >
               로그인
             </button>
           </form>
-          <div className="flex justify-center gap-4 mt-4 text-sm text-purple-700">
+
+          {/* 메뉴 */}
+          <div className="flex justify-center gap-4 mt-4 text-sm text-neutral">
             <button
-              type="button"
               onClick={() => setShowFindId(true)}
-              className="relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1px] after:bg-purple-500 hover:after:w-full after:transition-all after:duration-300"
+              className="transition-transform duration-200 hover:text-primary hover:scale-105"
             >
               아이디 찾기
             </button>
-
-            <span className="text-gray-400">|</span>
-
+            <span>|</span>
             <button
-              type="button"
               onClick={() => setShowFindPw(true)}
-              className="relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1px] after:bg-purple-500 hover:after:w-full after:transition-all after:duration-300"
+              className="transition-transform duration-200 hover:text-primary hover:scale-105"
             >
               비밀번호 찾기
             </button>
-
-            <span className="text-gray-400">|</span>
-
+            <span>|</span>
             <button
-              type="button"
               onClick={() => navigate("/join")}
-              className="relative after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1px] after:bg-purple-500 hover:after:w-full after:transition-all after:duration-300"
+              className="transition-transform duration-200 hover:text-primary hover:scale-105"
             >
               회원가입
             </button>

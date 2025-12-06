@@ -45,18 +45,18 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-transparent shadow-none p-4 flex justify-between items-center sticky top-0 z-50">
+      <header className="bg-base-100 shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
         <Link
           to="/"
-          className="font-extrabold text-2xl text-purple-600 hover:text-pink-500 transition transform hover:scale-105"
+          className="font-extrabold text-2xl text-neutral hover:text-primary transition transform hover:scale-105"
         >
           Sweet Home <LivelyCuteHouse />
         </Link>
-        {isLogin && <span>안녕하세요, {loginUserNickname}님!</span>}
-        <nav className="flex gap-6 text-purple-500 font-medium">
+        {isLogin && <span className="text-neutral font-medium">안녕하세요, {loginUserNickname}님!</span>}
+        <nav className="flex gap-6 text-neutral font-medium">
           <Link
             to="/"
-            className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-purple-100/30 transition transform hover:scale-105 shadow-sm"
+            className="flex items-center gap-1 px-3 py-1 rounded-full hover:bg-secondary transition"
           >
             <Home size={18} /> 홈
           </Link>
@@ -64,14 +64,14 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-pink-100/30 transition transform hover:scale-105 shadow-sm"
+                className="flex items-center gap-1 px-3 py-1 rounded-full hover:bg-secondary transition"
               >
                 <Key size={18} /> 로그인
               </Link>
 
               <Link
                 to="/join"
-                className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-indigo-100/30 transition transform hover:scale-105 shadow-sm"
+                className="flex items-center gap-1 px-3 py-1 rounded-full hover:bg-secondary transition"
               >
                 <Edit3 size={18} /> 회원가입
               </Link>
@@ -82,14 +82,14 @@ export default function Header() {
             <>
               <Link
                 to="/mypage"
-                className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-indigo-100/30 transition transform hover:scale-105 shadow-sm"
+                className="flex items-center gap-1 px-3 py-1 rounded-full hover:bg-secondary transition"
               >
                 <Edit3 size={18} /> 마이페이지
               </Link>
               <Link
                 to="#" // 라우팅을 막기 위해 '#' 사용
                 onClick={handleLogout} // ⬅️ 클릭 시 로그아웃 로직 실행
-                className="flex items-center font-bold gap-1 p-1 rounded-full hover:bg-pink-100/30 transition transform hover:scale-105 shadow-sm"
+                className="flex items-center gap-1 px-3 py-1 rounded-full hover:bg-secondary transition"
               >
                 <Key size={18} /> 로그아웃
               </Link>

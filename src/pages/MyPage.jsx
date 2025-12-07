@@ -10,7 +10,7 @@ export default function MyPage() {
   const [userInfo, setUserInfo] = useState(null);
 
   // 모달 상태
-  const [setOpenModal] = useState(null);
+  const [openModal, setOpenModal] = useState(null);
 
   const { showModal } = useModal();
 
@@ -41,8 +41,8 @@ export default function MyPage() {
 
   return (
     <div className="flex flex-col md:flex-row gap-10 max-w-5xl mx-auto bg-base-100 p-6 rounded-xl shadow-md text-neutral">
-      <ProfileLeft userInfo={userInfo} setOpenModal={setOpenModal} />
-      <ProfileRight userInfo={userInfo} setOpenModal={setOpenModal} />
+      <ProfileLeft userInfo={userInfo} setUserInfo={setUserInfo} openModal={openModal} setOpenModal={setOpenModal} />
+      <ProfileRight userInfo={userInfo} setUserInfo={setUserInfo} openModal={openModal} setOpenModal={setOpenModal} />
     </div>
   );
 }

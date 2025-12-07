@@ -67,7 +67,7 @@ export default function Modal() {
 
           {/* 확인 버튼 */}
           <button
-            className="btn btn-primary rounded-xl"
+            className="btn btn-primary rounded-xl w-20 py-1"
             onClick={() => {
               if (onConfirm) onConfirm(); // onConfirm 콜백 실행
               closeModal();    // 모달 닫기

@@ -43,6 +43,7 @@ export default function EditIdModal({ currentId, onClose, onUpdate }) {
     } catch (err) {
       console.error("아이디 체크 실패:", err);
       setIdCheckMessage("아이디 중복체크 중 오류가 발생했습니다.");
+      setIsIdAvailable(false);
     }
   };
 
@@ -64,7 +65,7 @@ export default function EditIdModal({ currentId, onClose, onUpdate }) {
       if (res.status === 200) {
         onUpdate(loginId); // 상위 상태 업데이트
         onClose(); // EditIdModal 닫기
-        showModal("아이디가 수정되었습니다."); // 전역 알림
+        showModal(res.data.message); // 전역 알림
       } else {
         showModal("아이디 수정에 실패했습니다.");
       }

@@ -4,7 +4,7 @@ export default function HomeSection() {
     <section className="w-full p-12 rounded-3xl shadow-lg border border-base-300 relative overflow-hidden">
       {/* 배경 이미지 */}
       <img
-        src="public/images/Gemini_Generated_Image_h2232ih2232ih223 (1)-1024x576.png" // 원하는 이미지 경로
+        src="/images/Gemini_Generated_Image_h2232ih2232ih223 (1)-1024x576.png" // 원하는 이미지 경로
         alt="Sweet Home Background"
         className="absolute inset-0 w-full h-full object-cover opacity-70"
       />

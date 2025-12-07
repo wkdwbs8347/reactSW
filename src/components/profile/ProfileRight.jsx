@@ -1,6 +1,9 @@
 import { useState } from "react";
 import ProfileField from "./ProfileField";
 import EditIdModal from "../edit/EditIdModal"; // 아이디 수정 모달
+import EditNicknameModal from "../edit/EditNicknameModal"; // 닉네임 수정 모달
+import EditEmailModal from "../edit/EditEmailModal"; // 이메일 수정 모달
+import EditPwdModal from "../edit/EditPwdModal"; // 비밀번호 수정 모달
 
 export default function ProfileRight({ userInfo, setUserInfo }) {
   const [openModal, setOpenModal] = useState(null); // 현재 열린 모달 상태
@@ -20,9 +23,7 @@ export default function ProfileRight({ userInfo, setUserInfo }) {
         <EditIdModal
           currentId={userInfo.loginId}
           onClose={() => setOpenModal(null)}
-          onUpdate={(newId) =>
-            setUserInfo({ ...userInfo, loginId: newId })
-          }
+          onUpdate={(newId) => setUserInfo({ ...userInfo, loginId: newId })}
         />
       )}
 
@@ -33,7 +34,15 @@ export default function ProfileRight({ userInfo, setUserInfo }) {
         editable
         onEdit={() => setOpenModal("editNickname")}
       />
-      {/* 나중에 EditNicknameModal 연결 가능 */}
+      {openModal === "editNickname" && (
+        <EditNicknameModal
+          currentNickname={userInfo.nickname}
+          onClose={() => setOpenModal(null)}
+          onUpdate={(newNickname) =>
+            setUserInfo({ ...userInfo, nickname: newNickname })
+          }
+        />
+      )}
 
       {/* ==================== 이메일 ==================== */}
       <ProfileField
@@ -42,7 +51,13 @@ export default function ProfileRight({ userInfo, setUserInfo }) {
         editable
         onEdit={() => setOpenModal("editEmail")}
       />
-      {/* 나중에 EditEmailModal 연결 가능 */}
+      {openModal === "editEmail" && (
+        <EditEmailModal
+          currentEmail={userInfo.email}
+          onClose={() => setOpenModal(null)}
+          onUpdate={(newEmail) => setUserInfo({ ...userInfo, email: newEmail })}
+        />
+      )}
 
       {/* ==================== 비밀번호 ==================== */}
       <ProfileField
@@ -51,13 +66,15 @@ export default function ProfileRight({ userInfo, setUserInfo }) {
         editable
         onEdit={() => setOpenModal("editPwd")}
       />
-      {/* 나중에 EditPwdModal 연결 가능 */}
+      {openModal === "editPwd" && (
+        <EditPwdModal onClose={() => setOpenModal(null)} />
+      )}
 
       {/* ==================== 가입일 ==================== */}
-      <ProfileField
-        label="가입일"
-        value={userInfo.regDate}
-      />
+      <ProfileField label="가입일" value={userInfo.regDate} />
+
+      {/* ==================== 생년월일 ==================== */}
+      <ProfileField label="생년월일" value={userInfo.birth} />
     </div>
   );
 }

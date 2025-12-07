@@ -8,7 +8,7 @@ export default function ProfileLeft({ userInfo, setOpenModal }) {
       <div className="bg-secondary rounded-xl shadow-md p-6 space-y-4 text-center text-neutral">
         <div className="relative w-28 h-28 mx-auto">
           <img 
-            src={userInfo.profileImage ?? "/images/default-profile.png"}
+            src={userInfo.profileImage ?? "/images/Gemini_Generated_Image_h2232ih2232ih223 (1)-1024x576.png"}
             className="w-28 h-28 rounded-full object-cover border border-base-100"
           />
           <button className="absolute bottom-1 right-1 text-xs bg-base-100 px-2 py-1 rounded text-primary font-semibold">

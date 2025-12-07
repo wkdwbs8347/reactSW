@@ -80,7 +80,7 @@ export default function EditIdModal({ currentId, onClose, onUpdate }) {
   return (
     <>
       {/* 모달 배경 영향 최소화 */}
-      <div className="fixed inset-0 flex justify-center items-center z-[9999] pointer-events-auto">
+      <div className="fixed inset-0 flex justify-center items-center z-[9999]">
         <div className="pointer-events-auto bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md">
           <h1 className="text-2xl font-bold text-center mb-6">아이디 수정</h1>
 

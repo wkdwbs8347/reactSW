@@ -85,7 +85,7 @@ export default function EditNicknameModal({
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-[9999] bg-black/30">
+    <div className="fixed inset-0 flex justify-center items-center z-[9999]">
       <form
         className="bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md"
         onSubmit={handleSubmit}
@@ -115,7 +115,6 @@ export default function EditNicknameModal({
                 setNickname(e.target.value);
               }
             }}
-            onBlur={checkNickname}
             className="flex-1 p-3 rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           />
 

@@ -56,7 +56,7 @@ export default function EditPwdModal({ onClose }) {
 
   return (
     <>
-      <div className="fixed inset-0 flex justify-center items-center z-[9999] pointer-events-auto bg-black/30">
+      <div className="fixed inset-0 flex justify-center items-center z-[9999]">
         <div className="pointer-events-auto bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md">
           <h1 className="text-2xl font-bold text-center mb-6">비밀번호 변경</h1>
 

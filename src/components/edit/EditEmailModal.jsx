@@ -88,7 +88,7 @@ export default function EditEmailModal({ currentEmail, onClose, onUpdate }) {
 
   return (
     <>
-      <div className="fixed inset-0 flex justify-center items-center z-[9999] pointer-events-auto bg-black/30">
+      <div className="fixed inset-0 flex justify-center items-center z-[9999]">
         <div className="pointer-events-auto bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md">
           <h1 className="text-2xl font-bold text-center mb-6">이메일 수정</h1>
 

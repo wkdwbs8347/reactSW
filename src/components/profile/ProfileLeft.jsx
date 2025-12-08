@@ -1,9 +1,9 @@
 import MenuButton from "../MenuButton";   
+import BuildingRegisterModal from "../BuildingRegisterModal";
 
-export default function ProfileLeft({ userInfo, setOpenModal }) {
+export default function ProfileLeft({ userInfo, setOpenModal, openModal }) {
   return (
     <div className="w-full md:w-1/3 space-y-6">
-
       {/* 프로필 영역 */}
       <div className="bg-secondary rounded-xl shadow-md p-6 space-y-4 text-center text-neutral">
         <div className="relative w-28 h-28 mx-auto">
@@ -15,7 +15,6 @@ export default function ProfileLeft({ userInfo, setOpenModal }) {
             변경
           </button>
         </div>
-
         <p className="font-bold text-xl">{userInfo.nickname}</p>
         <p className="text-sm text-neutral">{userInfo.email}</p>
       </div>
@@ -30,6 +29,13 @@ export default function ProfileLeft({ userInfo, setOpenModal }) {
         <MenuButton title="신고받은 내역" onClick={() => setOpenModal("reportedToMe")} />
       </div>
 
+      {/* 건물 등록 모달 */}
+      {openModal === "building" && (
+        <BuildingRegisterModal
+          userInfo={userInfo}
+          onClose={() => setOpenModal(null)}
+        />
+      )}
     </div>
-  )
+  );
 }

@@ -41,7 +41,7 @@ export default function OwnerApplyDetailPage() {
       <h1 className="text-2xl font-bold mb-4">입주 신청 상세</h1>
 
       <div className="p-4 border rounded-lg space-y-2">
-        <p><strong>신청자:</strong> {apply.userName}</p>
+        <p><strong>신청자:</strong> {apply.nickname}</p>
         <p><strong>층/호수:</strong> {apply.floor}층 {apply.unitNumber}호</p>
         <p><strong>신청일:</strong> {new Date(apply.requestDate).toLocaleString()}</p>
         <p><strong>상태:</strong> {apply.status}</p>

@@ -8,6 +8,8 @@ import Join from "./pages/Join.jsx";
 import MyPage from "./pages/MyPage.jsx";
 import BuildingRegisterPage from "./pages/BuildingRegisterPage.jsx";
 import MoveInPage from "./pages/MoveInPage";
+import OwnerApplyListPage from "./pages/OwnerApplyListPage.jsx";
+import OwnerApplyDetailPage from "./pages/OwnerApplyDetailPage.jsx";
 
 // 공통 컴포넌트 import
 import Header from "./components/Header.jsx";
@@ -51,6 +53,8 @@ function App() {
                 <Route path="/join" element={<Join />} />
                 <Route path="/building/register" element={<BuildingRegisterPage />} />
                 <Route path="/move-in" element={<MoveInPage />} />
+                <Route path="/owner/apply-list" element={<OwnerApplyListPage />} />
+                <Route path="/owner/apply-detail/:id" element={<OwnerApplyDetailPage />} />
               </Routes>
             </main>
 

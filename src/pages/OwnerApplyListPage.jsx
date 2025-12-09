@@ -30,19 +30,28 @@ export default function OwnerApplyListPage() {
         {applyList.map((item) => (
           <li
             key={item.id}
-            className="p-4 border rounded-lg flex justify-between items-center hover:bg-gray-50 cursor-pointer"
+            className="bg-primary/20 text-neutral
+    p-4 rounded-3xl shadow-lg
+    hover:bg-primary/40 hover:scale-105
+    transition transform
+    font-semibold
+    backdrop-blur
+    border border-primary/30
+    w-full
+    cursor-pointer
+    flex justify-between items-center"
             onClick={() => navigate(`/owner/apply-detail/${item.id}`)}
           >
             <div>
               <p>
-                <strong>{item.userName}</strong> 신청
+                <strong>{item.nickname}</strong> 신청
               </p>
               <p>
                 {item.floor}층 {item.unitNumber}호
               </p>
               <p>신청일: {new Date(item.requestDate).toLocaleString()}</p>
             </div>
-            <div className="text-sm text-gray-500">▶</div>
+            <div className="text-sm text-neutral">▶</div>
           </li>
         ))}
       </ul>

@@ -47,6 +47,7 @@ export default function MoveInPage() {
     }).open();
   };
 
+
   /**================================================
    🏢 주소 변경 = 건물 목록 조회 트리거
    /building/byAddress?address=...

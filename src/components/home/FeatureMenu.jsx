@@ -1,19 +1,41 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { Home, Building2, MessageCircle } from "lucide-react";
-import BuildingRegisterModal from "../BuildingRegisterModal.jsx";
 import { LoginChkContext } from "../../context/LoginChkContext";
+import useModal from "../../hooks/useModal";
 
 export default function FeatureMenu() {
-  const { loginUser } = useContext(LoginChkContext);
-  const [showBuildingModal, setShowBuildingModal] = useState(false);
+  const navigate = useNavigate();
+  const { isLogin } = useContext(LoginChkContext);
+  const { showModal } = useModal();
+
   const menus = [
     {
       id: 1,
       label: "건물등록",
       icon: <Building2 size={72} />,
-      action: () => setShowBuildingModal(true),
+      action: () => {
+        if (!isLogin) {
+          showModal("로그인이 필요한 서비스입니다.", () => navigate("/login"));
+          return;
+        }
+        navigate("/building/register");
+      },
     },
-    { id: 2, label: "입주신청", icon: <Home size={72} />, action: () => {} },
+
+    {
+      id: 2,
+      label: "입주신청",
+      icon: <Home size={72} />,
+      action: () => {
+        if (!isLogin) {
+          showModal("로그인이 필요한 서비스입니다.", () => navigate("/login"));
+          return;
+        }
+        navigate("/move-in"); 
+      },
+    },
+
     {
       id: 3,
       label: "채팅방",
@@ -45,13 +67,6 @@ export default function FeatureMenu() {
           <span className="font-bold text-xl text-neutral">{m.label}</span>
         </div>
       ))}
-
-      {showBuildingModal && (
-        <BuildingRegisterModal
-          userInfo={loginUser}
-          onClose={() => setShowBuildingModal(false)}
-        />
-      )}
     </section>
   );
 }

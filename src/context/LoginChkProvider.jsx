@@ -13,7 +13,6 @@ export default function LoginChkProvider({ children }) {
       try {
         const res = await api.get("/user/loginCheck");
         if (res.data.isLogin) {
-          console.log(res.data);
           setLoginUser(res.data.loginUser);
           setIsLogin(true);
           setterLoginId(res.data.loginId);

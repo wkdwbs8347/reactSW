@@ -1,5 +1,5 @@
 import MenuButton from "../MenuButton";   
-import BuildingRegisterModal from "../BuildingRegisterModal";
+import BuildingRegisterModal from "../../pages/BuildingRegisterPage";
 
 export default function ProfileLeft({ userInfo, setOpenModal, openModal }) {
   return (
@@ -21,10 +21,10 @@ export default function ProfileLeft({ userInfo, setOpenModal, openModal }) {
 
       {/* 메뉴 버튼 */}
       <div className="bg-secondary rounded-xl shadow-md p-4 space-y-3">
-        <MenuButton title="건물 등록" onClick={() => setOpenModal("building")} />
-        <MenuButton title="입주 신청" onClick={() => setOpenModal("movein")} />
+        <MenuButton title="건물 관리" onClick={() => setOpenModal("building")} />
+        <MenuButton title="입주 정보" onClick={() => setOpenModal("movein")} />
         <MenuButton title="입주 취소" onClick={() => setOpenModal("moveout")} />
-        <MenuButton title="채팅방 입장" onClick={() => setOpenModal("chat")} />
+        <MenuButton title="채팅방 관리" onClick={() => setOpenModal("chat")} />
         <MenuButton title="신고 내역" onClick={() => setOpenModal("reported")} />
         <MenuButton title="신고받은 내역" onClick={() => setOpenModal("reportedToMe")} />
       </div>

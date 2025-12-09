@@ -6,6 +6,8 @@ import Login from "./pages/Login.jsx";
 import Logout from "./pages/Logout.jsx";
 import Join from "./pages/Join.jsx";
 import MyPage from "./pages/MyPage.jsx";
+import BuildingRegisterPage from "./pages/BuildingRegisterPage.jsx";
+import MoveInPage from "./pages/MoveInPage";
 
 // 공통 컴포넌트 import
 import Header from "./components/Header.jsx";
@@ -47,6 +49,8 @@ function App() {
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/join" element={<Join />} />
+                <Route path="/building/register" element={<BuildingRegisterPage />} />
+                <Route path="/move-in" element={<MoveInPage />} />
               </Routes>
             </main>
 

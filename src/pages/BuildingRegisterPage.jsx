@@ -10,7 +10,7 @@ export default function BuildingRegisterPage() {
   const [buildingName, setBuildingName] = useState("");
   const [address, setAddress] = useState("");
   const [totalFloor, setTotalFloor] = useState(0);
-  const [room, setRoom] = useState(0);
+  const [unitNumber, setUnitNumber] = useState(0);
 
   const navigate = useNavigate();
   const { showModal } = useModal();
@@ -20,7 +20,7 @@ export default function BuildingRegisterPage() {
   const buildingNameRef = useRef(null);
   const addressRef = useRef(null);
   const totalFloorRef = useRef(null);
-  const roomRef = useRef(null);
+  const unitNumberRef = useRef(null);
 
   // 🔍 주소 검색 (Daum PostCode API)
   const searchAddress = () => {
@@ -53,9 +53,9 @@ export default function BuildingRegisterPage() {
       return;
     }
 
-    if (!room || room <= 0) {
+    if (!unitNumber || unitNumber <= 0) {
       showModal("층별 호수 정보를 입력해주세요.", () =>
-        roomRef.current.focus()
+        unitNumberRef.current.focus()
       );
       return;
     }
@@ -68,7 +68,7 @@ export default function BuildingRegisterPage() {
         name: buildingName,
         address,
         totalFloor,
-        room,
+        unitNumber,
       };
 
       // API 호출
@@ -194,9 +194,9 @@ export default function BuildingRegisterPage() {
               <div className="relative w-full">
                 <input
                   type="number"
-                  ref={roomRef}
-                  value={room}
-                  onChange={(e) => setRoom(Number(e.target.value))}
+                  ref={unitNumberRef}
+                  value={unitNumber}
+                  onChange={(e) => setUnitNumber(Number(e.target.value))}
                   className="
               w-full p-3 pr-10
               rounded-lg border border-base-100 bg-secondary text-center text-neutral
@@ -207,7 +207,7 @@ export default function BuildingRegisterPage() {
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col">
                   <button
                     type="button"
-                    onClick={() => setRoom(room + 1)}
+                    onClick={() => setUnitNumber(unitNumber + 1)}
                     className="text-xs hover:text-primary"
                   >
                     ▲
@@ -215,7 +215,7 @@ export default function BuildingRegisterPage() {
 
                   <button
                     type="button"
-                    onClick={() => room > 0 && setRoom(room - 1)}
+                    onClick={() => unitNumber > 0 && setUnitNumber(unitNumber - 1)}
                     className="text-xs hover:text-primary"
                   >
                     ▼

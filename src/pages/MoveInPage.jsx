@@ -119,7 +119,7 @@ export default function MoveInPage() {
   ==================================================*/
   return (
     <div className="p-6 max-w-xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold mb-4">입주 신청</h1>
+      <h1 className="text-2xl font-bold mb-4">멤버 신청</h1>
 
       {/* 신청자 */}
       <FormItem label="신청자">

@@ -33,7 +33,7 @@ export default function ResidentBuildingListPage() {
   if (buildings.length === 0)
     return (
       <p className="text-center mt-10 text-gray-500">
-        입주 등록된 건물이 없습니다.
+        거주중인 건물이 없습니다.
       </p>
     );
 
@@ -49,7 +49,7 @@ export default function ResidentBuildingListPage() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold mb-4">입주 건물 조회</h1>
+      <h1 className="text-2xl font-bold mb-4">거주중인 건물 조회</h1>
 
       <ul className="space-y-4">
         {currentItems.map((b) => (
@@ -65,7 +65,7 @@ export default function ResidentBuildingListPage() {
               w-full
               cursor-pointer
               flex justify-between items-center"
-            onClick={() => navigate(`/resident/building-detail/${b.id}`)}
+            onClick={() => navigate(`/mypage/resident/${b.id}`)}
           >
             <div>
               <h2 className="font-bold text-lg">{b.name}</h2>

@@ -60,7 +60,7 @@ export default function OwnerBuildingListPage() {
               w-full
               cursor-pointer
               flex justify-between items-center"
-            onClick={() => navigate(`/owner/building-detail/${b.id}`)}
+            onClick={() => navigate(`/mypage/building/${b.id}`)}
           >
             <div>
               <h2 className="font-bold text-lg">{b.name}</h2>

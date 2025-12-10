@@ -64,7 +64,7 @@ export default function OwnerApplyListPage() {
             className="bg-primary/20 text-neutral p-4 rounded-3xl shadow-lg
               hover:bg-primary/40 hover:scale-105 transition transform font-semibold
               backdrop-blur border border-primary/30 w-full cursor-pointer flex justify-between items-center"
-            onClick={() => navigate(`/owner/apply-detail/${item.id}`)}
+            onClick={() => navigate(`/mypage/apply/${item.id}`)}
           >
             <div>
               <p>

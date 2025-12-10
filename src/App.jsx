@@ -14,7 +14,7 @@ import OwnerBuildingListPage from "./pages/OwnerBuildingListPage.jsx";
 import OwnerBuildingDetailPage from "./pages/OwnerBuildingDetailPage.jsx";
 import ResidentBuildingListPage from "./pages/ResidentBuildingListPage.jsx";
 import ResidentBuildingDetailPage from "./pages/ResidentBuildingDetailPage.jsx";
-
+import ProfileRight from "./components/profile/ProfileRight.jsx";
 
 // 공통 컴포넌트 import
 import Header from "./components/Header.jsx";
@@ -53,17 +53,37 @@ function App() {
                 {/* 경로별 페이지 연결 */}
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/mypage" element={<MyPage />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/join" element={<Join />} />
                 <Route path="/building/register" element={<BuildingRegisterPage />} />
                 <Route path="/move-in" element={<MoveInPage />} />
-                <Route path="/owner/apply-list" element={<OwnerApplyListPage />} />
-                <Route path="/owner/apply-detail/:id" element={<OwnerApplyDetailPage />} />
-                <Route path="/owner/building-list" element={<OwnerBuildingListPage />} />
-                <Route path="/owner/building-detail/:id" element={<OwnerBuildingDetailPage />} />
-                <Route path="/resident/building-list" element={<ResidentBuildingListPage />} />
-                <Route path="/resident/building-detail/:id" element={<ResidentBuildingDetailPage />} />
+                {/* 🔥 추가 (마이페이지 그룹) */}
+                <Route path="/mypage/*" element={<MyPage />}>
+                  <Route index element={<ProfileRight />} />
+                  <Route
+                    path="building/register"
+                    element={<BuildingRegisterPage />}
+                  />
+                  <Route path="move-in" element={<MoveInPage />} />
+
+                  <Route path="apply-list" element={<OwnerApplyListPage />} />
+                  <Route path="apply/:id" element={<OwnerApplyDetailPage />} />
+
+                  <Route path="buildings" element={<OwnerBuildingListPage />} />
+                  <Route
+                    path="building/:id"
+                    element={<OwnerBuildingDetailPage />}
+                  />
+
+                  <Route
+                    path="resident"
+                    element={<ResidentBuildingListPage />}
+                  />
+                  <Route
+                    path="resident/:id"
+                    element={<ResidentBuildingDetailPage />}
+                  />
+                </Route>
               </Routes>
             </main>
 

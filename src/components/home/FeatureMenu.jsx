@@ -25,7 +25,7 @@ export default function FeatureMenu() {
 
     {
       id: 2,
-      label: "입주신청",
+      label: "멤버신청",
       icon: <Home size={72} />,
       action: () => {
         if (!isLogin) {

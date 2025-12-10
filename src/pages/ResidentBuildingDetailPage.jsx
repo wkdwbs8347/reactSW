@@ -51,16 +51,16 @@ export default function ResidentBuildingDetailPage() {
       />
       <div className="mt-4 space-y-2 text-gray-700">
         <p>
-          <strong>등록자 ID:</strong> {building.createdUserId}
+          <strong>거주자:</strong> {building.nickname}
         </p>
         <p>
-          <strong>등록일:</strong> {building.regDate}
+          <strong>멤버등록일:</strong> {building.regDate}
         </p>
         <p>
-          <strong>전체 층수:</strong> {building.totalFloor}층
+          <strong>층:</strong> {building.floor} 층
         </p>
         <p>
-          <strong>총 호실 수:</strong> {building.room}호
+          <strong>호수:</strong> {building.unitNumber} 호
         </p>
       </div>
 

@@ -1,48 +1,33 @@
-import { useEffect, useState } from "react";
-import api from "../api/axios";
-import useModal from "../hooks/useModal";
-import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { useContext } from "react";
+import { LoginChkContext } from "../context/LoginChkContext";
 import ProfileLeft from "../components/profile/ProfileLeft";
-import ProfileRight from "../components/profile/ProfileRight";
 
 export default function MyPage() {
-  const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState(null);
+  const { loginUser } = useContext(LoginChkContext);
 
-  // 모달 상태
-  const [openModal, setOpenModal] = useState(null);
-
-  const { showModal } = useModal();
-
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await api.get("/user/loginCheck");
-
-        if (res.data.isLogin) {
-          setUserInfo(res.data.loginUser);
-        } else {
-          showModal("로그인이 필요합니다.", () => navigate("/login"));
-        }
-      } catch (err) {
-        console.error(err);
-        showModal("회원 정보를 가져오는 데 실패했습니다.");
-      }
-    }
-    fetchUser();
-  }, [navigate, showModal]);
-
-  if (!userInfo) 
-    return (
-      <div className="flex justify-center items-center h-screen text-neutral text-lg">
-        로딩 중...
-      </div>
-    );
+  if (!loginUser) return <div>Loading...</div>;
 
   return (
-    <div className="flex flex-col md:flex-row gap-10 max-w-5xl mx-auto bg-base-100 p-6 rounded-xl shadow-md text-neutral">
-      <ProfileLeft userInfo={userInfo} setUserInfo={setUserInfo} openModal={openModal} setOpenModal={setOpenModal} />
-      <ProfileRight userInfo={userInfo} setUserInfo={setUserInfo} openModal={openModal} setOpenModal={setOpenModal} />
+    <div className="flex min-h-screen">
+      {/* ---------------------------
+          왼쪽 메뉴 영역
+          - 헤더 아래부터 시작
+          - 화면 왼쪽에 고정
+      --------------------------- */}
+      <aside className="w-72 bg-secondary shadow-md fixed top-16 left-0 h-[calc(100%-4rem)] p-6 flex flex-col">
+        <h1 className="text-2xl font-bold mb-6 text-neutral">마이페이지</h1>
+        <ProfileLeft />
+      </aside>
+
+      {/* ---------------------------
+          오른쪽 페이지 영역
+          - 왼쪽 메뉴 너비만큼 margin-left
+          - App 전체 배경과 자연스럽게 연결
+      --------------------------- */}
+      <main className="flex-1 ml-72 p-8">
+        <Outlet context={{ userInfo: loginUser }} />
+      </main>
     </div>
   );
 }

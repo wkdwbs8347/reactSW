@@ -32,12 +32,12 @@ export default function OwnerBuildingDetailPage() {
 
   // 버튼 리스트
   const buttons = [
-    { label: "입주 신청목록", path: `/owner/apply-list?buildingId=${id}` },
-    { label: "입주자 리스트", path: `/owner/${id}/resident-list` },
-    { label: "신고현황", path: `/owner/${id}/report-list` },
-    { label: "월간 보고서", path: `/owner/${id}/monthly-report` },
-    { label: "공지알림 발송", path: `/owner/${id}/notice` },
-    { label: "채팅방 관리", path: `/owner/${id}/chat` },
+    { label: "입주 신청목록", path: `/mypage/apply-list?buildingId=${id}` },
+    { label: "입주자 리스트", path: `/mypage/resident/${id}` },
+    { label: "신고현황", path: `/mypage/report/${id}` },
+    { label: "월간 보고서", path: `/mypage/monthly-report/${id}` },
+    { label: "공지알림 발송", path: `/mypage/notice/${id}` },
+    { label: "채팅방 관리", path: `/mypage/chat/${id}` },
   ];
 
   return (
@@ -51,16 +51,16 @@ export default function OwnerBuildingDetailPage() {
       />
       <div className="mt-4 space-y-2 text-gray-700">
         <p>
-          <strong>등록자 ID:</strong> {building.createdUserId}
+          <strong>등록자:</strong> {building.nickname}
         </p>
         <p>
           <strong>등록일:</strong> {building.regDate}
         </p>
         <p>
-          <strong>전체 층수:</strong> {building.totalFloor}층
+          <strong>전체 층수:</strong> {building.totalFloor} 층
         </p>
         <p>
-          <strong>총 호실 수:</strong> {building.room}호
+          <strong>총 호실 수:</strong> {building.unitCnt} 개
         </p>
       </div>
 

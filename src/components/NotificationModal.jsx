@@ -11,9 +11,10 @@ export default function NotificationModal({ notifications, onClose }) {
 
   // 알림 항목을 클릭했을 때 실행되는 함수
   const handleClick = (n) => {
+    let path = n.link.replace("/owner", "/mypage");
 
     // 1) 알림이 지정한 화면으로 이동
-    navigate(n.link);
+    navigate(path);
 
     // 2) 알림 읽음 처리 API 호출
     api.put(`/residence/notifications/mark-read/${n.id}`)

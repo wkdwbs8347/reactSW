@@ -10,6 +10,11 @@ import BuildingRegisterPage from "./pages/BuildingRegisterPage.jsx";
 import MoveInPage from "./pages/MoveInPage";
 import OwnerApplyListPage from "./pages/OwnerApplyListPage.jsx";
 import OwnerApplyDetailPage from "./pages/OwnerApplyDetailPage.jsx";
+import OwnerBuildingListPage from "./pages/OwnerBuildingListPage.jsx";
+import OwnerBuildingDetailPage from "./pages/OwnerBuildingDetailPage.jsx";
+import ResidentBuildingListPage from "./pages/ResidentBuildingListPage.jsx";
+import ResidentBuildingDetailPage from "./pages/ResidentBuildingDetailPage.jsx";
+
 
 // 공통 컴포넌트 import
 import Header from "./components/Header.jsx";
@@ -55,6 +60,10 @@ function App() {
                 <Route path="/move-in" element={<MoveInPage />} />
                 <Route path="/owner/apply-list" element={<OwnerApplyListPage />} />
                 <Route path="/owner/apply-detail/:id" element={<OwnerApplyDetailPage />} />
+                <Route path="/owner/building-list" element={<OwnerBuildingListPage />} />
+                <Route path="/owner/building-detail/:id" element={<OwnerBuildingDetailPage />} />
+                <Route path="/resident/building-list" element={<ResidentBuildingListPage />} />
+                <Route path="/resident/building-detail/:id" element={<ResidentBuildingDetailPage />} />
               </Routes>
             </main>
 

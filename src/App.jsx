@@ -57,7 +57,7 @@ function App() {
                 <Route path="/join" element={<Join />} />
                 <Route path="/building/register" element={<BuildingRegisterPage />} />
                 <Route path="/move-in" element={<MoveInPage />} />
-                {/* 🔥 추가 (마이페이지 그룹) */}
+                {/* (마이페이지 그룹) */}
                 <Route path="/mypage/*" element={<MyPage />}>
                   <Route index element={<ProfileRight />} />
                   <Route

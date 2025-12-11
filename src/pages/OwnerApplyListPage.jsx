@@ -27,7 +27,7 @@ export default function OwnerApplyListPage() {
         setApplyList(res.data);
       } catch (err) {
         console.log(err);
-        showModal("입주신청 목록을 불러오는 중 오류가 발생했습니다.");
+        showModal("신청 목록을 불러오는 중 오류가 발생했습니다.");
         setApplyList([]);
       } finally {
         setLoading(false);
@@ -55,7 +55,7 @@ export default function OwnerApplyListPage() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold mb-4">입주 신청 목록</h1>
+      <h1 className="text-2xl font-bold mb-4">멤버 신청 목록</h1>
 
       <ul className="space-y-4">
         {currentItems.map((item) => (
@@ -68,7 +68,7 @@ export default function OwnerApplyListPage() {
           >
             <div>
               <p>
-                <strong>{item.nickname}</strong> 신청
+                신청자: <strong>{item.nickname}</strong> 
               </p>
               <p>
                 {item.floor}층 {item.unitNumber}호

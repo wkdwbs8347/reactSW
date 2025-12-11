@@ -11,7 +11,9 @@ export default function OwnerBuildingDetailPage() {
   useEffect(() => {
     const fetchBuilding = async () => {
       try {
-        const res = await api.get(`/building/detail/${id}`);
+        const res = await api.get(`/building/detail`, {
+          params: { buildingId: id },
+        });
         setBuilding(res.data);
       } catch (err) {
         console.error(err);
@@ -32,8 +34,8 @@ export default function OwnerBuildingDetailPage() {
 
   // 버튼 리스트
   const buttons = [
-    { label: "입주 신청목록", path: `/mypage/apply-list?buildingId=${id}` },
-    { label: "입주자 리스트", path: `/mypage/resident/${id}` },
+    { label: "멤버 신청목록", path: `/mypage/apply-list?buildingId=${id}` },
+    { label: "거주자 리스트", path: `/mypage/resident/${id}` },
     { label: "신고현황", path: `/mypage/report/${id}` },
     { label: "월간 보고서", path: `/mypage/monthly-report/${id}` },
     { label: "공지알림 발송", path: `/mypage/notice/${id}` },

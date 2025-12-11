@@ -33,7 +33,7 @@ export default function ResidentBuildingListPage() {
   if (buildings.length === 0)
     return (
       <p className="text-center mt-10 text-gray-500">
-        거주중인 건물이 없습니다.
+        소속중인 건물이 없습니다.
       </p>
     );
 
@@ -49,27 +49,23 @@ export default function ResidentBuildingListPage() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold mb-4">거주중인 건물 조회</h1>
+      <h1 className="text-2xl font-bold mb-4">소속중인 건물 조회</h1>
 
       <ul className="space-y-4">
         {currentItems.map((b) => (
           <li
-            key={b.id}
-            className="bg-primary/20 text-neutral
-              p-4 rounded-3xl shadow-lg
-              hover:bg-primary/40 hover:scale-105
-              transition transform
-              font-semibold
-              backdrop-blur
-              border border-primary/30
-              w-full
-              cursor-pointer
-              flex justify-between items-center"
-            onClick={() => navigate(`/mypage/resident/${b.id}`)}
+            key={b.unitId} // unit 단위로 고유 key
+            className="bg-primary/20 text-neutral p-4 rounded-3xl shadow-lg cursor-pointer flex justify-between items-center"
+            onClick={() =>
+              navigate(`/mypage/resident/detail?unitId=${b.unitId}`)
+            } // unitId 기준
           >
             <div>
               <h2 className="font-bold text-lg">{b.name}</h2>
               <p className="text-sm text-gray-500">{b.address}</p>
+              <p className="text-sm text-gray-500">
+                층: {b.floor}, 호수: {b.unitNumber}
+              </p>
               <p className="text-sm text-gray-500">총 {b.totalFloor}층</p>
             </div>
             <div className="text-sm text-neutral">▶</div>

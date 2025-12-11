@@ -16,7 +16,7 @@ export default function MyPage() {
           - 화면 왼쪽에 고정
       --------------------------- */}
       <aside className="w-72 bg-secondary shadow-md fixed top-16 left-0 h-[calc(100%-4rem)] p-6 flex flex-col">
-        <h1 className="text-2xl font-bold mb-6 text-neutral">마이페이지</h1>
+        <h1 className="text-2xl font-bold mt-4 mb-6 text-neutral">마이페이지</h1>
         <ProfileLeft />
       </aside>
 

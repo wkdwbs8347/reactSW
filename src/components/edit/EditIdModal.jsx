@@ -78,68 +78,73 @@ export default function EditIdModal({ currentId, onClose, onUpdate }) {
   };
 
   return (
-    <>
-      {/* 모달 배경 영향 최소화 */}
-      <div className="fixed inset-0 flex justify-center items-center z-[9999]">
-        <div className="pointer-events-auto bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md">
-          <h1 className="text-2xl font-bold text-center mb-6">아이디 수정</h1>
+    <div className="fixed inset-0 z-9999 flex justify-center items-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
 
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div className="flex gap-2">
-              <input
-                ref={loginIdRef}
-                type="text"
-                placeholder="아이디"
-                value={loginId}
-                maxLength={20}
-                onFocus={() => {
-                  setIdCheckMessage("영문 / 숫자 입력 가능");
-                  setIsIdAvailable(null);
-                }}
-                onChange={(e) =>
-                  setLoginId(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))
-                }
-                className="flex-1 p-3 rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              />
-              <button
-                type="button"
-                onClick={checkLoginId}
-                className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
-              >
-                중복체크
-              </button>
-            </div>
+      {/* Modal Box */}
+      <div className="relative bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md z-10">
+        <h1 className="text-2xl font-bold text-center mb-6">아이디 수정</h1>
 
-            <p
-              className={`text-sm ${
-                isIdAvailable === null
-                  ? "text-gray-500"
-                  : isIdAvailable
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <div className="flex gap-2">
+            <input
+              ref={loginIdRef}
+              type="text"
+              placeholder="아이디"
+              value={loginId}
+              maxLength={20}
+              onFocus={() => {
+                setIdCheckMessage("영문 / 숫자 입력 가능");
+                setIsIdAvailable(null);
+              }}
+              onChange={(e) =>
+                setLoginId(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))
+              }
+              className="flex-1 p-3 rounded-lg border border-base-100 bg-secondary text-neutral 
+                       focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+
+            <button
+              type="button"
+              onClick={checkLoginId}
+              className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
             >
-              {idCheckMessage}
-            </p>
+              중복체크
+            </button>
+          </div>
 
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
-              >
-                취소
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
-              >
-                수정
-              </button>
-            </div>
-          </form>
-        </div>
+          <p
+            className={`text-sm ${
+              isIdAvailable === null
+                ? "text-gray-500"
+                : isIdAvailable
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
+            {idCheckMessage}
+          </p>
+
+          <div className="flex justify-end gap-2 mt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-lg border border-gray-300 
+                       text-gray-700 hover:bg-gray-100"
+            >
+              취소
+            </button>
+
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
+            >
+              수정
+            </button>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }

@@ -87,77 +87,80 @@ export default function EditEmailModal({ currentEmail, onClose, onUpdate }) {
   };
 
   return (
-    <>
-      <div className="fixed inset-0 flex justify-center items-center z-[9999]">
-        <div className="pointer-events-auto bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md">
-          <h1 className="text-2xl font-bold text-center mb-6">이메일 수정</h1>
+    <div className="fixed inset-0 z-9999 flex justify-center items-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"/>
 
-          {/* 이메일 */}
+      {/* Modal Box */}
+      <div className="relative bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md z-10">
+        <h1 className="text-2xl font-bold text-center mb-6">이메일 수정</h1>
+
+        {/* 이메일 입력 */}
+        <div className="flex gap-2 mb-3">
+          <input
+            ref={emailRef}
+            type="email"
+            placeholder="이메일"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setStep("input");
+            }}
+            className="flex-1 p-3 rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+          />
+
+          <button
+            onClick={sendCode}
+            disabled={loading || step === "result"}
+            className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
+          >
+            {loading ? (
+              <span className="loading loading-dots loading-sm"></span>
+            ) : (
+              sendBtnLabel
+            )}
+          </button>
+        </div>
+
+        {/* 인증번호 입력 */}
+        {step === "verify" && (
           <div className="flex gap-2 mb-3">
             <input
-              ref={emailRef}
-              type="email"
-              placeholder="이메일"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setStep("input");
-              }}
+              ref={codeRef}
+              type="text"
+              placeholder="인증번호 입력"
+              value={code}
+              maxLength={6}
+              onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, ""))}
               className="flex-1 p-3 rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
 
             <button
-              onClick={sendCode}
-              disabled={loading || step === "result"}
-              className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
+              type="button"
+              onClick={verifyCode}
+              className="px-4 py-2 bg-success text-white rounded-lg font-semibold hover:bg-success-focus"
             >
-              {loading ? (
-                <span className="loading loading-dots loading-sm"></span>
-              ) : (
-                sendBtnLabel
-              )}
+              확인
             </button>
           </div>
+        )}
 
-          {step === "verify" && (
-            <div className="flex gap-2 mb-3">
-              <input
-                ref={codeRef}
-                type="text"
-                placeholder="인증번호 입력"
-                value={code}
-                maxLength={6}
-                onChange={
-                  (e) => setCode(e.target.value.replace(/[^0-9]/g, "")) // 숫자만
-                }
-                className="flex-1 p-3 rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              />
-
-              <button
-                type="button"
-                onClick={verifyCode}
-                className="px-4 py-2 bg-success text-white rounded-lg font-semibold hover:bg-success-focus">
-                확인
-              </button>
-            </div>
-          )}
-
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
-            >
-              취소
-            </button>
-            <button
-              onClick={handleUpdate}
-              className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
-            >
-              수정
-            </button>
-          </div>
+        {/* 버튼 영역 */}
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleUpdate}
+            className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
+          >
+            수정
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

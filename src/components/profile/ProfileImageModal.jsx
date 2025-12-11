@@ -14,9 +14,25 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
 
   const { showModal } = useModal();
 
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+  const ALLOWED_EXT = ["jpg", "jpeg", "png", "gif", "webp"];
+
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // 확장자 검증
+    const ext = file.name.split(".").pop().toLowerCase();
+    if (!ALLOWED_EXT.includes(ext)) {
+      showModal("이미지 파일(jpg, jpeg, png, gif, webp)만 업로드 가능합니다.");
+      return;
+    }
+
+    // 파일 사이즈 검증
+    if (file.size > MAX_SIZE) {
+      showModal("파일 크기는 3MB 이하만 업로드할 수 있습니다.");
+      return;
+    }
+
     setSelectedFile(file);
     setPreview(URL.createObjectURL(file));
   };
@@ -45,20 +61,33 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
     }
   };
 
+  const handleReset = async () => {
+    try {
+      const res = await api.post("/user/reset-profile-image");
+      const newUrl = res.data.profileImage;
+
+      onSave(newUrl); // 부모 상태 반영
+      onClose();
+      showModal("기본 이미지로 변경되었습니다.");
+    } catch (e) {
+      console.error(e);
+      showModal("기본 이미지로 변경에 실패했습니다.");
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center px-4">
       {/* Backdrop */}
-      <div className="absolute inset-0" />
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"/>
 
       {/* Modal Box */}
       <div className="relative bg-base-100 rounded-2xl w-full max-w-sm p-6 z-10 shadow-md text-neutral animate-scaleIn">
-
         <h2 className="text-lg font-semibold mb-4">프로필 이미지 변경</h2>
 
         {/* Image Preview */}
         <div className="w-36 h-36 mx-auto rounded-full overflow-hidden border shadow-sm bg-secondary">
           <img
-            src={preview || "/images/default_profile.png"}
+            src={preview || "/images/defaultProfileImg.jpg"}
             alt="preview"
             className="w-full h-full object-cover"
           />
@@ -75,19 +104,28 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
         </div>
 
         {/* Buttons */}
-        <div className="mt-6 flex justify-end gap-2">
+        <div className="mt-6 flex justify-between">
           <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-base-300 hover:bg-base-200 transition"
+            onClick={handleReset}
+            className="px-4 py-2 rounded-lg bg-error text-white hover:bg-error/80 transition"
           >
-            취소
+            기본 이미지로
           </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 rounded-lg bg-primary text-neutral hover:bg-primary-focus transition"
-          >
-            저장
-          </button>
+
+          <div className="flex gap-2">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 rounded-lg border border-base-300 hover:bg-base-200 transition"
+            >
+              취소
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 rounded-lg bg-primary text-neutral hover:bg-primary-focus transition"
+            >
+              저장
+            </button>
+          </div>
         </div>
       </div>
 

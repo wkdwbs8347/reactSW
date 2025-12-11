@@ -85,9 +85,13 @@ export default function EditNicknameModal({
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-[9999]">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+
+      {/* Modal Box */}
       <form
-        className="bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md"
+        className="relative bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md z-10"
         onSubmit={handleSubmit}
       >
         <h1 className="text-2xl font-bold text-center mb-6">닉네임 수정</h1>
@@ -143,7 +147,7 @@ export default function EditNicknameModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border text-gray-700"
+            className="px-4 py-2 rounded-lg border text-gray-700 hover:bg-gray-100"
           >
             취소
           </button>

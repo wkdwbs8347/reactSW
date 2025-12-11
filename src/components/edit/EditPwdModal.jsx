@@ -55,55 +55,60 @@ export default function EditPwdModal({ onClose }) {
   };
 
   return (
-    <>
-      <div className="fixed inset-0 flex justify-center items-center z-[9999]">
-        <div className="pointer-events-auto bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md">
-          <h1 className="text-2xl font-bold text-center mb-6">비밀번호 변경</h1>
+    <div className="fixed inset-0 z-9999 flex items-center justify-center">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
 
-          <input
-            ref={currentPwRef}
-            type="password"
-            placeholder="현재 비밀번호"
-            value={currentPw}
-            onChange={(e) => setCurrentPw(e.target.value)}
-            className="flex-1 p-3 w-full rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mb-3"
-          />
+      {/* Modal Box */}
+      <div className="relative bg-base-100 p-6 rounded-2xl w-full max-w-md shadow-md z-10">
+        <h1 className="text-2xl font-bold text-center mb-6">비밀번호 변경</h1>
 
-          <input
-            ref={newPwRef}
-            type="password"
-            placeholder="새 비밀번호"
-            value={newPw}
-            onChange={(e) => setNewPw(e.target.value)}
-            className="flex-1 p-3 w-full rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mb-3"
-          />
+        <input
+          ref={currentPwRef}
+          type="password"
+          placeholder="현재 비밀번호"
+          value={currentPw}
+          onChange={(e) => setCurrentPw(e.target.value)}
+          className="flex-1 p-3 w-full rounded-lg border border-base-100 bg-secondary text-neutral 
+        focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mb-3"
+        />
 
-          <input
-            ref={newPw2Ref}
-            type="password"
-            placeholder="새 비밀번호 확인"
-            value={newPw2}
-            onChange={(e) => setNewPw2(e.target.value)}
-            className="flex-1 p-3 w-full rounded-lg border border-base-100 bg-secondary text-neutral focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mb-6"
-          />
+        <input
+          ref={newPwRef}
+          type="password"
+          placeholder="새 비밀번호"
+          value={newPw}
+          onChange={(e) => setNewPw(e.target.value)}
+          className="flex-1 p-3 w-full rounded-lg border border-base-100 bg-secondary text-neutral
+        focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mb-3"
+        />
 
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
-            >
-              취소
-            </button>
+        <input
+          ref={newPw2Ref}
+          type="password"
+          placeholder="새 비밀번호 확인"
+          value={newPw2}
+          onChange={(e) => setNewPw2(e.target.value)}
+          className="flex-1 p-3 w-full rounded-lg border border-base-100 bg-secondary text-neutral
+        focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary mb-6"
+        />
 
-            <button
-              onClick={onSave}
-              className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
-            >
-              저장
-            </button>
-          </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+          >
+            취소
+          </button>
+
+          <button
+            onClick={onSave}
+            className="px-4 py-2 rounded-lg bg-primary text-neutral font-semibold hover:bg-primary-focus"
+          >
+            저장
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

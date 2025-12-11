@@ -32,7 +32,7 @@ export default function LoginChkProvider({ children }) {
       }
     };
     checkLogin();
-  }, [isLogin]);
+  }, []);
 
   return (
     <LoginChkContext.Provider

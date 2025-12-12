@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { LoginChkContext } from "../context/LoginChkContext";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ export default function ResidentBuildingListPage() {
   const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const effectRan = useRef(false);
 
   // 페이징 상태
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,6 +16,8 @@ export default function ResidentBuildingListPage() {
   const buttonsPerBlock = 5;
 
   useEffect(() => {
+    if (effectRan.current) return; // 이미 실행됐으면 종료
+    effectRan.current = true;
     const fetchBuildings = async () => {
       try {
         const res = await api.get("/building/byResident");
@@ -41,7 +44,6 @@ export default function ResidentBuildingListPage() {
   const totalPages = Math.ceil(buildings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = buildings.slice(startIndex, startIndex + itemsPerPage);
-
   // 페이지 버튼 블록 계산
   const currentBlock = Math.ceil(currentPage / buttonsPerBlock);
   const startPage = (currentBlock - 1) * buttonsPerBlock + 1;
@@ -57,7 +59,9 @@ export default function ResidentBuildingListPage() {
             key={b.unitId} // unit 단위로 고유 key
             className="bg-primary/20 text-neutral p-4 rounded-3xl shadow-lg cursor-pointer flex justify-between items-center"
             onClick={() =>
-              navigate(`/mypage/resident/detail?unitId=${b.unitId}`)
+              navigate(
+                `/mypage/resident/detail?unitId=${b.unitId}&buildingId=${b.id}`
+              )
             } // unitId 기준
           >
             <div>

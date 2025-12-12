@@ -4,13 +4,12 @@ import useModal from "../../hooks/useModal";
 
 /**
  * 프로필 이미지 변경 모달
- * - FindIdModal 스타일과 동일한 디자인 시스템 적용
- * - Secondary 톤 배경 + 둥근 모서리 + shadow-md + 정돈된 여백
- * - Preview 영역도 라운드 + border + overflow-hidden
  */
 export default function ProfileImageModal({ currentImage, onClose, onSave }) {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [preview, setPreview] = useState(currentImage);
+  const [preview, setPreview] = useState(
+    currentImage || "/images/defaultProfileImg.jpg" // ✅ 기본이미지 적용
+  );
 
   const { showModal } = useModal();
 
@@ -20,6 +19,7 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     // 확장자 검증
     const ext = file.name.split(".").pop().toLowerCase();
     if (!ALLOWED_EXT.includes(ext)) {
@@ -29,7 +29,7 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
 
     // 파일 사이즈 검증
     if (file.size > MAX_SIZE) {
-      showModal("파일 크기는 3MB 이하만 업로드할 수 있습니다.");
+      showModal("파일 크기는 10MB 이하만 업로드할 수 있습니다.");
       return;
     }
 
@@ -38,6 +38,23 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
   };
 
   const handleSave = async () => {
+    // ⭐ 기본이미지가 preview에 설정된 경우 → reset API 호출
+    if (!selectedFile && preview === "/images/defaultProfileImg.jpg") {
+      try {
+        const res = await api.post("/user/reset-profile-image");
+        const newUrl = res.data.profileImage;
+
+        onSave(newUrl);
+        onClose();
+        showModal("기본 이미지로 변경되었습니다.");
+        return;
+      } catch (e) {
+        console.error(e);
+        showModal("기본 이미지로 변경에 실패했습니다.");
+      }
+    }
+
+    // ⭐ 일반 파일 업로드 저장 처리
     if (!selectedFile) {
       showModal("이미지 파일을 선택해주세요.");
       return;
@@ -52,7 +69,7 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
       });
 
       const newUrl = res.data.profileImage;
-      onSave(newUrl); // 부모 상태 업데이트
+      onSave(newUrl);
       onClose();
       showModal("프로필 이미지가 변경되었습니다.");
     } catch (err) {
@@ -61,24 +78,18 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
     }
   };
 
-  const handleReset = async () => {
-    try {
-      const res = await api.post("/user/reset-profile-image");
-      const newUrl = res.data.profileImage;
+  const handleReset = () => {
+    // 파일 초기화
+    setSelectedFile(null);
 
-      onSave(newUrl); // 부모 상태 반영
-      onClose();
-      showModal("기본 이미지로 변경되었습니다.");
-    } catch (e) {
-      console.error(e);
-      showModal("기본 이미지로 변경에 실패했습니다.");
-    }
+    // preview만 기본 이미지로 변경 (즉시 저장 X)
+    setPreview("/images/defaultProfileImg.jpg");
   };
 
   return (
     <div className="fixed inset-0 z-9999 flex items-center justify-center px-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"/>
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
 
       {/* Modal Box */}
       <div className="relative bg-base-100 rounded-2xl w-full max-w-sm p-6 z-10 shadow-md text-neutral animate-scaleIn">
@@ -87,7 +98,7 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
         {/* Image Preview */}
         <div className="w-36 h-36 mx-auto rounded-full overflow-hidden border shadow-sm bg-secondary">
           <img
-            src={preview || "/images/defaultProfileImg.jpg"}
+            src={preview}
             alt="preview"
             className="w-full h-full object-cover"
           />
@@ -129,8 +140,8 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
         </div>
       </div>
 
-      {/* 등장 애니메이션 */}
-      <style>{`
+      <style>
+        {`
         .animate-scaleIn {
           animation: scaleIn 0.2s ease-out forwards;
         }
@@ -138,7 +149,8 @@ export default function ProfileImageModal({ currentImage, onClose, onSave }) {
           0% { transform: scale(0.85); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }
         }
-      `}</style>
+      `}
+      </style>
     </div>
   );
 }

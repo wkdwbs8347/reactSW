@@ -5,6 +5,7 @@ import api from "../api/axios";
 export default function ResidentBuildingDetailPage() {
   const [searchParams] = useSearchParams();
   const unitId = searchParams.get("unitId");
+  const buildingId = searchParams.get("buildingId");
   const navigate = useNavigate();
   const [building, setBuilding] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,8 +15,8 @@ export default function ResidentBuildingDetailPage() {
 
     const fetchBuilding = async () => {
       try {
-        const res = await api.get(`/building/detail`, { params: { unitId } });
-        setBuilding(res.data);
+        const res = await api.get(`/building/detail`, { params: { buildingId, unitId } });
+        setBuilding(res.data.building);
       } catch (err) {
         console.error(err);
       } finally {
@@ -47,7 +48,7 @@ export default function ResidentBuildingDetailPage() {
       </h2>
       <p className="text-sm text-gray-500">{building.address}</p>
       <img
-        src={building.profileImage ?? "/images/default_building.png"}
+        src={building.profileImage ?? "/images/defaultBuildingImg.jpg"}
         alt="건물 이미지"
         className="w-64 h-64 object-cover rounded-xl mt-2"
       />

@@ -7,10 +7,9 @@ export default function OwnerBuildingDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [building, setBuilding] = useState(null);
-  const [isOwner, setIsOwner] = useState(false); // Owner 여부
+  const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // 모달 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -39,71 +38,83 @@ export default function OwnerBuildingDetailPage() {
     );
 
   const ownerButtons = [
-    { label: "멤버 신청목록", path: `/mypage/apply-list?buildingId=${id}` },
-    { label: "멤버 리스트", path: `/mypage/residentList/${id}` },
+    { label: "멤버 신청목록", path: `/mypage/building/apply-list?buildingId=${id}` },
+    { label: "멤버 리스트", path: `/mypage/building/${id}/members` },
     { label: "신고현황", path: `/mypage/report/${id}` },
     { label: "월간 보고서", path: `/mypage/monthly-report/${id}` },
-    { label: "공지알림 발송", path: `/mypage/notice/${id}` },
+    { label: "전체공지 발송", path: `/mypage/notice/${id}` },
     { label: "채팅방 관리", path: `/mypage/chat/${id}` },
   ];
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <h2 className="text-2xl font-bold mb-4">{building.name} 상세 정보</h2>
-      <p className="text-sm text-gray-500">{building.address}</p>
+    <div className="p-6 max-w-3xl mx-auto flex flex-col min-h-[700px]">
+      {/* ===== 콘텐츠 영역 ===== */}
+      <div className="flex-1 space-y-6">
+        <h2 className="text-2xl font-bold mb-4">{building.name} 상세 정보</h2>
+        <p className="text-sm text-gray-500">{building.address}</p>
 
-      <div className="relative w-64 h-64 mt-2">
-        <img
-          src={building.profileImage ?? "/images/defaultBuildingImg.jpg"}
-          alt="건물 이미지"
-          className="w-full h-full object-cover rounded-xl"
-        />
+        <div className="relative w-64 h-64 mt-2">
+          <img
+            src={building.profileImage ?? "/images/defaultBuildingImg.jpg"}
+            alt="건물 이미지"
+            className="w-full h-full object-cover rounded-xl"
+          />
 
-        {/* Owner만 이미지 수정 버튼 노출 */}
+          {isOwner && (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="absolute bottom-2 right-2 bg-primary text-white px-3 py-1 rounded-lg text-sm"
+            >
+              이미지 수정
+            </button>
+          )}
+        </div>
+
+        <div className="mt-4 space-y-2 text-gray-700">
+          <p>
+            <strong>등록자:</strong> {building.nickname}
+          </p>
+          <p>
+            <strong>등록일:</strong> {building.regDate}
+          </p>
+          <p>
+            <strong>전체 층수:</strong> {building.totalFloor} 층
+          </p>
+          <p>
+            <strong>총 호실 수:</strong> {building.unitCnt} 개
+          </p>
+        </div>
+
         {isOwner && (
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="absolute bottom-2 right-2 bg-primary text-white px-3 py-1 rounded-lg text-sm"
-          >
-            이미지 수정
-          </button>
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            {ownerButtons.map((btn, idx) => (
+              <button
+                key={idx}
+                className="bg-primary/20 text-neutral p-3 rounded-2xl shadow-lg 
+                  hover:bg-primary/40 hover:scale-105 transition transform 
+                  font-semibold backdrop-blur border border-primary/30 
+                  flex justify-between items-center"
+                onClick={() => navigate(btn.path)}
+              >
+                <span className="text-sm">{btn.label}</span>
+                <span className="text-xs text-neutral">▶</span>
+              </button>
+            ))}
+          </div>
         )}
       </div>
 
-      <div className="mt-4 space-y-2 text-gray-700">
-        <p>
-          <strong>등록자:</strong> {building.nickname}
-        </p>
-        <p>
-          <strong>등록일:</strong> {building.regDate}
-        </p>
-        <p>
-          <strong>전체 층수:</strong> {building.totalFloor} 층
-        </p>
-        <p>
-          <strong>총 호실 수:</strong> {building.unitCnt} 개
-        </p>
+      {/* ===== 하단 버튼 영역 (고정) ===== */}
+      <div className="flex justify-start items-center h-12 mt-4">
+        <button
+          className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl 
+                     hover:bg-primary/40 transition text-sm font-semibold"
+          onClick={() => navigate(-1)}
+        >
+          ◀ 뒤로
+        </button>
       </div>
 
-      {/* Owner 전용 버튼 */}
-      {isOwner && (
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          {ownerButtons.map((btn) => (
-            <button
-              key={btn.label}
-              className="bg-primary/20 text-neutral p-3 rounded-2xl shadow-lg 
-                 hover:bg-primary/40 hover:scale-105 transition transform 
-                 font-semibold backdrop-blur border border-primary/30 flex justify-between items-center"
-              onClick={() => navigate(btn.path)}
-            >
-              <span className="text-sm">{btn.label}</span>
-              <span className="text-xs text-neutral">▶</span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* 이미지 수정 모달 */}
       {isModalOpen && (
         <BuildingImageModal
           currentImage={building.profileImage}

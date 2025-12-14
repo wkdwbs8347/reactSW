@@ -19,7 +19,7 @@ export default function FeatureMenu() {
           showModal("로그인이 필요한 서비스입니다.", () => navigate("/login"));
           return;
         }
-        navigate("/building/register");
+        navigate("/buildingAdd");
       },
     },
 

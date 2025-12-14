@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import api from "../api/axios";
 import useModal from "../hooks/useModal"; // ⭐ 모달 훅 추가
-import Modal from "../components/Modal"; // ⭐ 모달 컴포넌트 추가
+import Modal from "./Modal"; // ⭐ 모달 컴포넌트 추가
 
 export default function FindPwModal({ close, setLoginPw, showGlobalModal }) {
   // 입력값 상태

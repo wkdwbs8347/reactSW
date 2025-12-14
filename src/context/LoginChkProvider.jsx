@@ -7,6 +7,7 @@ export default function LoginChkProvider({ children }) {
   const [loginId, setterLoginId] = useState(""); // 로그인 된 유저 아이디
   const [loginUserNickname, setLoginUserNickname] = useState(""); // 로그인 된 유저 닉네임
   const [loginUser, setLoginUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -29,6 +30,8 @@ export default function LoginChkProvider({ children }) {
         setIsLogin(false);
         setterLoginId("");
         setLoginUserNickname("");
+      } finally {
+        setLoading(false); // 체크 완료
       }
     };
     checkLogin();
@@ -45,6 +48,7 @@ export default function LoginChkProvider({ children }) {
         setLoginUserNickname,
         loginUser,
         setLoginUser,
+        loading,
       }}
     >
       {children}

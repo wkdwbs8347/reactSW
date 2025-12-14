@@ -15,6 +15,12 @@ import OwnerBuildingDetailPage from "./pages/OwnerBuildingDetailPage.jsx";
 import ResidentBuildingListPage from "./pages/ResidentBuildingListPage.jsx";
 import ResidentBuildingDetailPage from "./pages/ResidentBuildingDetailPage.jsx";
 import ProfileRight from "./components/profile/ProfileRight.jsx";
+import BuildingMemberListPage from "./pages/BuildingMemberListPage.jsx";
+import BuildingMemberDetailPage from "./pages/BuildingMemberDetailPage.jsx";
+import ResidentMemberListPage from "./pages/ResidentMemberListPage.jsx";
+import ResidentMemberDetailPage from "./pages/ResidentMemberDetailPage.jsx";
+import MessageListPage from "./pages/MessageListPage";
+import MessageDetailPage from "./pages/MessageDetailPage";
 
 // 공통 컴포넌트 import
 import Header from "./components/Header.jsx";
@@ -55,21 +61,25 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/join" element={<Join />} />
-                <Route path="/building/register" element={<BuildingRegisterPage />} />
+                <Route path="/buildingAdd" element={<BuildingRegisterPage />} />
+                <Route path="apply-list" element={<OwnerApplyListPage />} />
                 <Route path="/move-in" element={<MoveInPage />} />
                 {/* (마이페이지 그룹) */}
                 <Route path="/mypage/*" element={<MyPage />}>
                   <Route index element={<ProfileRight />} />
                   <Route
-                    path="building/register"
+                    path="buildingAdd"
                     element={<BuildingRegisterPage />}
                   />
                   <Route path="move-in" element={<MoveInPage />} />
 
-                  <Route path="apply-list" element={<OwnerApplyListPage />} />
-                  <Route path="apply/:id" element={<OwnerApplyDetailPage />} />
+                  <Route
+                    path="building/apply-list"
+                    element={<OwnerApplyListPage />}
+                  />
+                  <Route path="building/apply/:id" element={<OwnerApplyDetailPage />} />
 
-                  <Route path="buildings" element={<OwnerBuildingListPage />} />
+                  <Route path="building" element={<OwnerBuildingListPage />} />
                   <Route
                     path="building/:id"
                     element={<OwnerBuildingDetailPage />}
@@ -83,6 +93,25 @@ function App() {
                     path="resident/:id"
                     element={<ResidentBuildingDetailPage />}
                   />
+                  {/* Resident 전용 멤버 리스트/디테일 */}
+                  <Route
+                    path="resident/building/:buildingId/members"
+                    element={<ResidentMemberListPage />}
+                  />
+                  <Route
+                    path="resident/building/:buildingId/members/:userId/unit/:unitId"
+                    element={<ResidentMemberDetailPage />}
+                  />
+                  <Route
+                    path="building/:id/members"
+                    element={<BuildingMemberListPage />}
+                  />
+                  <Route
+                    path="building/:id/members/:userId/unit/:unitId"
+                    element={<BuildingMemberDetailPage />}
+                  />
+                   <Route path="message" element={<MessageListPage />} />
+                   <Route path="message/:id" element={<MessageDetailPage />} /> 
                 </Route>
               </Routes>
             </main>

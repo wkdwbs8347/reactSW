@@ -6,15 +6,24 @@ export function ModalProvider({ children }) {
     open: false,
     message: "",
     onConfirm: null,
+    onCancel: null,     // 새 필드
+    showCancel: false,  // 새 필드
   });
 
-  const showModal = useCallback((message, onConfirm) => {
-    setModal({ open: true, message, onConfirm });
+  const showModal = useCallback((message, onConfirm, onCancel = null) => {
+    setModal({
+      open: true,
+      message,
+      onConfirm,
+      onCancel,
+      showCancel: !!onCancel, // onCancel이 있으면 취소 버튼 표시
+    });
   }, []);
 
   const closeModal = useCallback(() => {
     setModal((prev) => ({ ...prev, open: false }));
   }, []);
+
   return (
     <ModalContext.Provider value={{ modal, showModal, closeModal }}>
       {children}

@@ -10,14 +10,14 @@ export default function ResidentBuildingListPage() {
   const [loading, setLoading] = useState(true);
   const effectRan = useRef(false);
 
-  // 페이징 상태
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // 페이지당 5개
+  const itemsPerPage = 4;
   const buttonsPerBlock = 5;
 
   useEffect(() => {
-    if (effectRan.current) return; // 이미 실행됐으면 종료
+    if (effectRan.current) return;
     effectRan.current = true;
+
     const fetchBuildings = async () => {
       try {
         const res = await api.get("/building/byResident");
@@ -40,35 +40,43 @@ export default function ResidentBuildingListPage() {
       </p>
     );
 
-  // 현재 페이지에 표시할 항목 계산
   const totalPages = Math.ceil(buildings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = buildings.slice(startIndex, startIndex + itemsPerPage);
-  // 페이지 버튼 블록 계산
+
   const currentBlock = Math.ceil(currentPage / buttonsPerBlock);
   const startPage = (currentBlock - 1) * buttonsPerBlock + 1;
   const endPage = Math.min(startPage + buttonsPerBlock - 1, totalPages);
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
+    <div className="p-6 max-w-3xl mx-auto flex flex-col min-h-[700px]">
       <h1 className="text-2xl font-bold mb-4">소속중인 건물 조회</h1>
 
       <ul className="space-y-4">
         {currentItems.map((b) => (
           <li
-            key={b.unitId} // unit 단위로 고유 key
-            className="bg-primary/20 text-neutral p-4 rounded-3xl shadow-lg cursor-pointer flex justify-between items-center"
+            key={b.unitId}
+            className="bg-primary/20 text-neutral
+              p-4 rounded-3xl shadow-lg
+              hover:bg-primary/40 hover:scale-105
+              transition transform
+              font-semibold
+              backdrop-blur
+              border border-primary/30
+              w-full
+              cursor-pointer
+              flex justify-between items-center"
             onClick={() =>
               navigate(
                 `/mypage/resident/detail?unitId=${b.unitId}&buildingId=${b.id}`
               )
-            } // unitId 기준
+            }
           >
             <div>
               <h2 className="font-bold text-lg">{b.name}</h2>
               <p className="text-sm text-gray-500">{b.address}</p>
               <p className="text-sm text-gray-500">
-                층: {b.floor}, 호수: {b.unitNumber}
+                {b.floor}층, {b.unitNumber}호
               </p>
               <p className="text-sm text-gray-500">총 {b.totalFloor}층</p>
             </div>
@@ -77,14 +85,16 @@ export default function ResidentBuildingListPage() {
         ))}
       </ul>
 
-      {/* 페이지 네비게이션 */}
-      <div className="flex justify-center space-x-3 mt-6">
+      {/* ✅ 페이징 하단 고정 */}
+      <div className="flex space-x-2 justify-center mt-auto">
         <button
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl 
+             hover:bg-primary/40 transition
+             flex items-center justify-center leading-none cursor-pointer"
           disabled={startPage === 1}
           onClick={() => setCurrentPage(startPage - 1)}
         >
-          ◀
+          <span className="relative top-[1px]">◀</span>
         </button>
 
         {Array.from(
@@ -93,8 +103,10 @@ export default function ResidentBuildingListPage() {
         ).map((page) => (
           <button
             key={page}
-            className={`px-3 py-1 rounded ${
-              page === currentPage ? "bg-primary text-white" : "bg-gray-200"
+            className={`px-3 py-1 rounded-2xl transition ${
+              page === currentPage
+                ? "bg-primary text-white"
+                : "bg-primary/20 text-neutral hover:bg-primary/40"
             }`}
             onClick={() => setCurrentPage(page)}
           >
@@ -103,11 +115,13 @@ export default function ResidentBuildingListPage() {
         ))}
 
         <button
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl 
+             hover:bg-primary/40 transition
+             flex items-center justify-center leading-none cursor-pointer"
           disabled={endPage === totalPages}
           onClick={() => setCurrentPage(endPage + 1)}
         >
-          ▶
+          <span className="relative top-[1px]">▶</span>
         </button>
       </div>
     </div>

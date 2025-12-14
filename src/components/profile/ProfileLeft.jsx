@@ -7,16 +7,21 @@ export default function ProfileLeft() {
 
   const menus = [
     { title: "프로필", path: "/mypage" },
-    { title: "건물등록", path: "/mypage/building/register" },
+    { title: "건물등록", path: "/mypage/buildingAdd" },
     { title: "멤버신청", path: "/mypage/move-in" },
-    { title: "건물관리", path: "/mypage/buildings" },
-    { title: "내 건물 정보", path: "/mypage/resident" },
+    { title: "건물관리", path: "/mypage/building" },
+    { title: "소속건물", path: "/mypage/resident" },
+    { title: "우편함", path: "/mypage/message" },
   ];
 
   return (
     <div className="flex flex-col gap-3">
       {menus.map((menu, idx) => {
-        const isActive = location.pathname === menu.path; // 현재 경로와 비교
+        const isActive =
+          menu.path === "/mypage"
+            ? location.pathname === menu.path // 프로필은 정확히 일치
+            : location.pathname === menu.path ||
+              location.pathname.startsWith(menu.path + "/");
         return (
           <MenuButton
             key={idx}

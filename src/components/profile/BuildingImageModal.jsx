@@ -69,7 +69,6 @@ export default function BuildingImageModal({
 
       onSave(res.data.buildingImage);
       onClose();
-      showModal("이미지가 업로드되었습니다.");
     } catch (err) {
       console.error(err);
       showModal("이미지 업로드에 실패했습니다.");

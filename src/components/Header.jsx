@@ -1,60 +1,48 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Home, Key, Edit3, Bell } from "lucide-react"; // ⬅️ Bell 추가
+import { Home, Key, Edit3, Bell } from "lucide-react";
 import { LivelyCuteHouse } from "./LivelyCuteHouse";
 import api from "../api/axios";
 import useModal from "../hooks/useModal";
 import Modal from "./Modal";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { LoginChkContext } from "../context/LoginChkContext";
-import NotificationModal from "./NotificationModal"; // ⬅️ 알림 모달 import
+import NotificationModal from "./NotificationModal";
+import useNotificationWebSocket from "../hooks/useNotificationWebSocket";
 
 export default function Header() {
   const navigate = useNavigate();
   const { isLogin, setIsLogin, loginUserNickname, setLoginUserNickname, loginUser } =
     useContext(LoginChkContext);
   const { modal, showModal, closeModal } = useModal();
-
-  // -------------------------------
-  // ✅ 추가: 알림 관련 state
-  // -------------------------------
-  const [notifications, setNotifications] = useState([]);
   const [showNotif, setShowNotif] = useState(false);
 
-  useEffect(() => {
-    if (isLogin && loginUser) {
-      api.get(`/residence/notifications/${loginUser.id}`)
-        .then(res => setNotifications(res.data))
-        .catch(() => showModal("알림 조회 중 오류가 발생했습니다."));
-    }
-  }, [isLogin, loginUser]);
+  // WebSocket 알림 Hook
+  const { notifications, markAsRead, markAllNotificationsAsRead } = useNotificationWebSocket(
+    isLogin && loginUser ? loginUser.id : null
+  );
 
-  // -------------------------------
-  // 기존 로그아웃 처리 함수
-  // -------------------------------
+  // 실시간 안 읽은 알림 수
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   const handleLogout = async (e) => {
     e.preventDefault();
-
     try {
       const res = await api.post("/user/doLogout");
-
       if (res.data.success) {
         setIsLogin(false);
         setLoginUserNickname("");
-
-        showModal("로그아웃 되었습니다.", () => {
-          navigate("/");
-        });
+        showModal("로그아웃 되었습니다.", () => navigate("/"));
       } else {
-        showModal("로그아웃 처리에 실패했습니다. (응답 오류)", () => {
-          navigate("/");
-        });
+        showModal("로그아웃 처리에 실패했습니다.", () => navigate("/"));
       }
     } catch (err) {
-      console.error("로그아웃 실패:", err);
-      showModal("서버 오류로 로그아웃에 실패했습니다.", () => {
-        navigate("/");
-      });
+      console.error(err);
+      showModal("서버 오류로 로그아웃에 실패했습니다.", () => navigate("/"));
     }
+  };
+
+  const handleOpenNotifications = () => {
+    setShowNotif(true);
   };
 
   return (
@@ -110,17 +98,14 @@ export default function Header() {
                 <Key size={18} /> 로그아웃
               </Link>
 
-              {/* -------------------------------
-                  ✅ 추가: 알림 버튼
-              ------------------------------- */}
               <button
                 className="relative px-3 py-1 rounded-full hover:bg-secondary transition"
-                onClick={() => setShowNotif(true)}
+                onClick={handleOpenNotifications}
               >
                 <Bell size={18} />
-                {notifications.length > 0 && (
+                {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 px-1 text-xs bg-red-500 text-white rounded-full">
-                    {notifications.length}
+                    {unreadCount}
                   </span>
                 )}
               </button>
@@ -129,22 +114,16 @@ export default function Header() {
         </nav>
       </header>
 
-      {/* -------------------------------
-          ✅ 추가: 알림 모달
-      ------------------------------- */}
       {showNotif && (
-        <NotificationModal 
-          notifications={notifications} 
-          onClose={() => setShowNotif(false)} 
+        <NotificationModal
+          notifications={notifications}
+          onClose={() => setShowNotif(false)}
+          markAsRead={markAsRead}
+          markAllNotificationsAsRead={markAllNotificationsAsRead}
         />
       )}
 
-      <Modal
-        open={modal.open}
-        message={modal.message}
-        onConfirm={modal.onConfirm}
-        onClose={closeModal}
-      />
+      <Modal open={modal.open} message={modal.message} onConfirm={modal.onConfirm} onClose={closeModal} />
     </>
   );
 }

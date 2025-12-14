@@ -9,9 +9,8 @@ export default function OwnerBuildingListPage() {
   const [buildings, setBuildings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 페이징 상태
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // 페이지당 항목 4개
+  const itemsPerPage = 4;
   const buttonsPerBlock = 5;
 
   useEffect(() => {
@@ -30,20 +29,23 @@ export default function OwnerBuildingListPage() {
   }, [loginUser]);
 
   if (loading) return <p className="text-center mt-10">로딩중...</p>;
-  if (buildings.length === 0) return <p className="text-center mt-10 text-gray-500">등록한 건물이 없습니다.</p>;
+  if (buildings.length === 0)
+    return (
+      <p className="text-center mt-10 text-gray-500">
+        등록한 건물이 없습니다.
+      </p>
+    );
 
-  // 현재 페이지에 표시할 항목 계산
   const totalPages = Math.ceil(buildings.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = buildings.slice(startIndex, startIndex + itemsPerPage);
 
-  // 페이지 버튼 블록 계산
   const currentBlock = Math.ceil(currentPage / buttonsPerBlock);
   const startPage = (currentBlock - 1) * buttonsPerBlock + 1;
   const endPage = Math.min(startPage + buttonsPerBlock - 1, totalPages);
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
+    <div className="p-6 max-w-3xl mx-auto flex flex-col min-h-[700px]">
       <h1 className="text-2xl font-bold mb-4">등록 건물 조회</h1>
 
       <ul className="space-y-4">
@@ -73,34 +75,43 @@ export default function OwnerBuildingListPage() {
         ))}
       </ul>
 
-      {/* 페이지 네비게이션 */}
-      <div className="flex justify-center space-x-3 mt-6">
+      {/* 페이징 하단 고정 */}
+      <div className="flex space-x-2 justify-center mt-auto">
         <button
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl 
+             hover:bg-primary/40 transition
+             flex items-center justify-center leading-none cursor-pointer"
           disabled={startPage === 1}
           onClick={() => setCurrentPage(startPage - 1)}
         >
-          ◀
+          <span className="relative top-[1px]">◀</span>
         </button>
 
-        {Array.from({ length: endPage - startPage + 1 }, (_, idx) => startPage + idx).map(
-          (page) => (
-            <button
-              key={page}
-              className={`px-3 py-1 rounded ${page === currentPage ? "bg-primary text-white" : "bg-gray-200"}`}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </button>
-          )
-        )}
+        {Array.from(
+          { length: endPage - startPage + 1 },
+          (_, idx) => startPage + idx
+        ).map((page) => (
+          <button
+            key={page}
+            className={`px-3 py-1 rounded-2xl transition ${
+              page === currentPage
+                ? "bg-primary text-white"
+                : "bg-primary/20 text-neutral hover:bg-primary/40"
+            }`}
+            onClick={() => setCurrentPage(page)}
+          >
+            {page}
+          </button>
+        ))}
 
         <button
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl 
+             hover:bg-primary/40 transition
+             flex items-center justify-center leading-none cursor-pointer"
           disabled={endPage === totalPages}
           onClick={() => setCurrentPage(endPage + 1)}
         >
-          ▶
+          <span className="relative top-[1px]">▶</span>
         </button>
       </div>
     </div>

@@ -10,7 +10,7 @@ export default function useNotificationWebSocket(userId) {
   useEffect(() => {
     if (!userId) return;
 
-    // 1️⃣ 기존 미확인 알림 목록 조회 (REST)
+    // 기존 미확인 알림 목록 조회 (REST)
     const fetchNotifications = () => {
       api
         .get(`/notifications/${userId}`) // 미확인 알림만 조회
@@ -22,7 +22,7 @@ export default function useNotificationWebSocket(userId) {
 
     fetchNotifications();
 
-    // 2️⃣ WebSocket 연결
+    // WebSocket 연결
     const socket = new SockJS("http://localhost:8080/ws-stomp", null, {
       withCredentials: true,
     });
@@ -33,7 +33,7 @@ export default function useNotificationWebSocket(userId) {
       debug: () => {},
     });
 
-    // 3️⃣ 알림 실시간 수신
+    // 알림 실시간 수신
     client.onConnect = () => {
       client.subscribe(`/topic/notifications/${userId}`, (msg) => {
         const data = JSON.parse(msg.body);
@@ -54,7 +54,7 @@ export default function useNotificationWebSocket(userId) {
     };
   }, [userId]);
 
-  // 4️⃣ 읽음 처리
+  // 읽음 처리
   const markAsRead = (id) => {
     api.put(`/notifications/mark-read/${id}`).then(() => {
       // 알림 목록에서 해당 알림을 읽음 처리 후 목록에서 제거
@@ -62,7 +62,7 @@ export default function useNotificationWebSocket(userId) {
     });
   };
 
-  // 5️⃣ 모든 알림 읽음 처리
+  // 모든 알림 읽음 처리
   const markAllNotificationsAsRead = () => {
     api.put(`/notifications/mark-all-read/${userId}`).then(() => {
       // 모든 알림을 읽음 처리 후 목록에서 제거

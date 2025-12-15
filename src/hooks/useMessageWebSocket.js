@@ -27,7 +27,6 @@ export default function useMessageWebSocket(userId) {
       // 메시지 구독
       client.subscribe(`/topic/messages/${userId}`, (msg) => {
         const newMessage = JSON.parse(msg.body);
-        console.log(newMessage);
 
         // 새로운 메시지가 기존 메시지와 중복되지 않도록 처리
         setMessages((prevMessages) => {
@@ -53,5 +52,5 @@ export default function useMessageWebSocket(userId) {
     return () => clientRef.current?.deactivate();
   }, [userId]);
 
-  return { messages };
+  return { messages, setMessages };
 }

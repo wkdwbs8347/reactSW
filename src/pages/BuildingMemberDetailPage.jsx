@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "../api/axios";
+import api from "../api/axios"; // 변경됨
+import MessageSendForm from "../components/MessageSendForm.jsx";
 import useModal from "../hooks/useModal.js";
 
 export default function BuildingMemberDetailPage() {
@@ -10,13 +11,14 @@ export default function BuildingMemberDetailPage() {
 
   const [member, setMember] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false); // 모달 상태
 
   useEffect(() => {
-    if (!unitId) return; // unitId 없으면 호출 안 함
+    if (!unitId) return; 
     const fetchMember = async () => {
       try {
-        const res = await axios.get("/buildingMember/detail", {
-          params: { id, userId, unitId },
+        const res = await api.get("/buildingMember/detail", {
+          params: { id, userId, unitId }, // api 인스턴스 사용
         });
         setMember(res.data);
       } catch (err) {
@@ -32,40 +34,29 @@ export default function BuildingMemberDetailPage() {
   if (!member) return <p className="text-center mt-10">멤버 정보를 찾을 수 없습니다.</p>;
 
   // 등록 해제 버튼
-const handleUnregister = () => {
-  showModal(
-    "정말 등록해제 하시겠습니까?",
-    async () => {
-      try {
-        await axios.delete(`/api/buildingMember/unregister`, {
-          data: { id, userId, unitId },
-        });
-        // 성공 후 알림
-        showModal("멤버 등록이 해제되었습니다.", () => navigate(-1));
-      } catch (err) {
-        console.error(err);
-        showModal("등록해제에 실패했습니다.");
+  const handleUnregister = () => {
+    showModal(
+      "정말 등록해제 하시겠습니까?",
+      async () => {
+        try {
+          await api.delete(`/buildingMember/unregister`, {
+            data: { id, userId, unitId },
+          });
+          showModal("멤버 등록이 해제되었습니다.", () => navigate(-1));
+        } catch (err) {
+          console.error(err);
+          showModal("등록해제에 실패했습니다.");
+        }
+      },
+      () => {
+        console.log("등록해제 취소됨");
       }
-    },
-    () => {
-      console.log("등록해제 취소됨"); // 취소 버튼 클릭 시
-    }
-  );
-};
+    );
+  };
 
-  // 알림 보내기 버튼
-  const handleSendNotification = () => {
-    showModal("알림을 보내시겠습니까?", async () => {
-      try {
-        await axios.post(`/api/buildingMember/notify`, {
-          id, userId, unitId, message: "알림 테스트"
-        });
-        alert("알림이 전송되었습니다.");
-      } catch (err) {
-        console.error(err);
-        alert("알림 전송에 실패했습니다.");
-      }
-    });
+  // 메세지 보내기 버튼 (모달)
+  const handleSendMessage = () => {
+    setIsMessageModalOpen(true);
   };
 
   return (
@@ -97,13 +88,13 @@ const handleUnregister = () => {
         </button>
         <button
           className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 transition"
-          onClick={handleSendNotification}
+          onClick={handleSendMessage}
         >
-          알림보내기
+          메세지 보내기
         </button>
       </div>
 
-      {/* 뒤로가기 버튼 영역 */}
+      {/* 뒤로가기 버튼 */}
       <div className="flex justify-start items-center h-12 mt-4">
         <button
           className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl hover:bg-primary/40 transition text-sm font-semibold"
@@ -112,6 +103,18 @@ const handleUnregister = () => {
           ◀ 뒤로
         </button>
       </div>
+
+      {/* 메시지 모달 */}
+      {isMessageModalOpen && (
+        <MessageSendForm
+          recipient={{
+            userId: member.userId,
+            nickname: member.nickname,
+          }}
+          hideTitleInput={false}
+          onClose={() => setIsMessageModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

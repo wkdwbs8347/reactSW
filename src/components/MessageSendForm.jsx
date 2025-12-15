@@ -1,12 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../api/axios";
 import useModal from "../hooks/useModal";
 
-export default function MessageSendForm({ recipient, onClose }) {
+export default function MessageSendForm({
+  recipient,
+  title: initialTitle = "",
+  hideTitleInput = false,
+  onClose,
+  onSend
+}) {
   const { showModal } = useModal();
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState("");
   const [sending, setSending] = useState(false);
+
+  // props로 전달된 초기 title이 바뀔 때 반영
+  useEffect(() => {
+    setTitle(initialTitle);
+  }, [initialTitle]);
 
   const handleSend = async () => {
     if (!title || !content) {
@@ -16,13 +27,16 @@ export default function MessageSendForm({ recipient, onClose }) {
 
     setSending(true);
     try {
-      await api.post("/message/send", {
-        receiverId: recipient.userId,
-        title,
-        content,
-      });
-
-      showModal("메시지가 전송되었습니다.", onClose);
+      if (onSend) {
+        await onSend(content, title); // 부모에서 처리
+      } else {
+        await api.post("/message/send", {
+          receiverId: recipient.userId,
+          title,
+          content,
+        });
+        showModal("메시지가 전송되었습니다.", onClose);
+      }
     } catch (err) {
       console.error(err);
       showModal("메시지 전송 실패");
@@ -37,13 +51,23 @@ export default function MessageSendForm({ recipient, onClose }) {
       <div className="relative bg-base-100 rounded-3xl max-w-sm w-[90%] p-6 flex flex-col gap-4 shadow-xl animate-scaleIn z-[10001]">
         <h2 className="text-lg font-bold text-neutral">To: {recipient.nickname}</h2>
 
-        <input
-          type="text"
-          placeholder="제목"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="bg-secondary text-neutral border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-        />
+        {!hideTitleInput && (
+          <input
+            type="text"
+            placeholder="제목 (40자 이내)"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={40}
+            className="bg-secondary text-neutral border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        )}
+
+        {hideTitleInput && (
+          <div className="bg-secondary text-neutral border border-gray-300 p-2 rounded-lg">
+            {title}
+          </div>
+        )}
+
         <textarea
           placeholder="내용"
           value={content}
@@ -52,10 +76,17 @@ export default function MessageSendForm({ recipient, onClose }) {
         />
 
         <div className="flex justify-end gap-3 mt-2">
-          <button className="btn rounded-xl w-24 py-1 bg-brown_card text-brown_text hover:bg-brown_accent" onClick={onClose}>
+          <button
+            className="btn rounded-xl w-24 py-1 bg-brown_card text-brown_text hover:bg-brown_accent"
+            onClick={onClose}
+          >
             취소
           </button>
-          <button className="btn btn-primary rounded-xl w-24 py-1" onClick={handleSend} disabled={sending}>
+          <button
+            className="btn btn-primary rounded-xl w-24 py-1"
+            onClick={handleSend}
+            disabled={sending}
+          >
             {sending ? "전송중..." : "전송"}
           </button>
         </div>

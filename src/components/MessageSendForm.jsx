@@ -39,7 +39,7 @@ export default function MessageSendForm({
       }
     } catch (err) {
       console.error(err);
-      showModal("메시지 전송 실패");
+      showModal(err.response.data);
     } finally {
       setSending(false);
     }

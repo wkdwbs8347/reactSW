@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
-import { FiUser } from "react-icons/fi"; // Feather Icons 중 사용자 아이콘
-import { FaCrown } from "react-icons/fa"; // FontAwesome 크라운 아이콘
+import { FiUser } from "react-icons/fi";
+import { FaCrown } from "react-icons/fa";
 
 export default function BuildingMemberListPage() {
   const { id } = useParams(); // buildingId
@@ -12,6 +12,9 @@ export default function BuildingMemberListPage() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // 추가 (로그인한 내 ID)
+  const myUserId = Number(sessionStorage.getItem("userId"));
+
   // 페이지당 아이템, 버튼 블록
   const itemsPerPage = 5;
   const buttonsPerBlock = 5;
@@ -20,7 +23,7 @@ export default function BuildingMemberListPage() {
     const fetchMembers = async () => {
       try {
         const res = await axios.get(`/buildingMember/list`, {
-          params: { buildingId: id }, // URL param 사용
+          params: { buildingId: id },
         });
         setMembers(res.data);
       } catch (err) {
@@ -60,16 +63,31 @@ export default function BuildingMemberListPage() {
         className="space-y-2 mb-6"
         style={{ minHeight: `${listMinHeight}px` }}
       >
+        {/* Owner */}
         <h3 className="flex items-center space-x-2 mt-6 mb-2 text-neutral font-semibold text-lg leading-none">
           <FaCrown className="text-yellow-500 w-5 h-5" />
           <span>Owner</span>
         </h3>
+
         {owner && (
           <div
-            onClick={() =>
-              navigate(`/mypage/building/${id}/members/${owner.userId}/unit/${owner.unitId}`)
+            onClick={
+              owner.userId === myUserId
+                ? undefined
+                : () =>
+                    navigate(
+                      `/mypage/resident/building/${id}/members/${owner.userId}/unit/${owner.unitId}`
+                    )
             }
-            className="cursor-pointer bg-primary/25 text-neutral p-2.5 rounded-3xl shadow-lg hover:bg-primary/40 hover:scale-105 transition transform border-2 border-yellow-400 flex justify-between items-center"
+            className={`
+      bg-primary/25 text-neutral p-2.5 rounded-3xl shadow-lg
+      border-2 border-yellow-400 flex justify-between items-center
+      ${
+        owner.userId === myUserId
+          ? "cursor-default opacity-80 animate-pulse"
+          : "cursor-pointer hover:bg-primary/40 hover:scale-105 transition transform"
+      }
+    `}
           >
             <span className="flex items-center space-x-2">
               <FaCrown className="text-yellow-500 w-5 h-5" />
@@ -80,20 +98,35 @@ export default function BuildingMemberListPage() {
             </span>
           </div>
         )}
+
+        {/* Residents */}
         <h3 className="flex items-center space-x-2 !mt-7 mb-2 text-neutral font-medium text-m">
           <FiUser className="text-blue-800 w-6 h-6" />
           <span>Residents</span>
         </h3>
+
         {currentItems.map((m, idx) => (
           <div
             key={idx}
             onClick={() =>
-              navigate(`/mypage/building/${id}/members/${m.userId}/unit/${m.unitId}`)
+              navigate(
+                `/mypage/building/${id}/members/${m.userId}/unit/${m.unitId}`
+              )
             }
-            className="cursor-pointer bg-primary/10 text-neutral p-2.5 rounded-3xl shadow hover:bg-primary/30 hover:scale-105 transition transform flex justify-between items-center"
-          > <span className="flex items-center space-x-2">
-            <FiUser className="text-blue-800 w-6 h-6"/>
-            <span>{m.nickname}</span>
+            className={`
+              cursor-pointer bg-primary/10 text-neutral p-2.5 rounded-3xl shadow
+              hover:bg-primary/30 hover:scale-105 transition transform
+              flex justify-between items-center
+              ${
+                m.userId === myUserId
+                  ? "border-2 border-primary animate-pulse"
+                  : ""
+              }
+            `}
+          >
+            <span className="flex items-center space-x-2">
+              <FiUser className="text-blue-800 w-6 h-6" />
+              <span>{m.nickname}</span>
             </span>
             <span className="text-sm text-neutral">
               {m.floor}층 {m.unitNumber}호
@@ -106,7 +139,7 @@ export default function BuildingMemberListPage() {
       <div className="flex justify-between items-center h-12">
         <button
           className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl hover:bg-primary/40 transition text-sm font-semibold"
-          onClick={() => navigate(-1)} // 뒤로가기
+          onClick={() => navigate(-1)}
         >
           ◀ 뒤로
         </button>
@@ -117,7 +150,7 @@ export default function BuildingMemberListPage() {
             disabled={startPage === 1}
             onClick={() => setCurrentPage(startPage - 1)}
           >
-            <span className="relative top-[1px]">◀</span>
+            ◀
           </button>
 
           {Array.from(
@@ -142,7 +175,7 @@ export default function BuildingMemberListPage() {
             disabled={endPage === totalPages}
             onClick={() => setCurrentPage(endPage + 1)}
           >
-            <span className="relative top-[1px]">▶</span>
+            ▶
           </button>
         </div>
       </div>

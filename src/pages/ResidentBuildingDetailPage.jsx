@@ -139,6 +139,7 @@ export default function ResidentBuildingDetailPage() {
         <BuildingChatModal
           roomId={roomId} // 🟢 백엔드에서 받아온 실제 roomId 전달
           user={currentUser}
+          buildingName={building.name}
           onClose={() => setIsChatOpen(false)}
         />
       )}

@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import BuildingImageModal from "../components/profile/BuildingImageModal";
+import BuildingChatModal from "../components/BuildingChatModal"; // ✅ 추가
 
 export default function OwnerBuildingDetailPage() {
   const { id } = useParams();
@@ -12,6 +13,11 @@ export default function OwnerBuildingDetailPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // ✅ 채팅 관련 상태 (추가만 함)
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [roomId, setRoomId] = useState(null);
+
   useEffect(() => {
     const fetchBuilding = async () => {
       try {
@@ -20,13 +26,27 @@ export default function OwnerBuildingDetailPage() {
         });
         setBuilding(res.data.building);
         setIsOwner(res.data.isOwner);
+
+        // ✅ 이미 내려오고 있음
+        setRoomId(res.data.roomId);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
+
+    const fetchUser = async () => {
+      try {
+        const res = await api.get("/user/me");
+        setCurrentUser(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchBuilding();
+    fetchUser();
   }, [id]);
 
   if (loading) return <p className="text-center mt-10">로딩중...</p>;
@@ -40,10 +60,12 @@ export default function OwnerBuildingDetailPage() {
   const ownerButtons = [
     { label: "멤버 신청목록", path: `/mypage/building/apply-list?buildingId=${id}` },
     { label: "멤버 리스트", path: `/mypage/building/${id}/members` },
+    { label: "채팅방", action: () => setIsChatOpen(true) },
     { label: "신고현황", path: `/mypage/report/${id}` },
     { label: "월간 보고서", path: `/mypage/monthly-report/${id}` },
     { label: "전체공지 발송", path: `/mypage/notice/${id}` },
-    { label: "채팅방 관리", path: `/mypage/chat/${id}` },
+
+
   ];
 
   return (
@@ -71,18 +93,10 @@ export default function OwnerBuildingDetailPage() {
         </div>
 
         <div className="mt-4 space-y-2 text-gray-700">
-          <p>
-            <strong>등록자:</strong> {building.nickname}
-          </p>
-          <p>
-            <strong>등록일:</strong> {building.regDate}
-          </p>
-          <p>
-            <strong>전체 층수:</strong> {building.totalFloor} 층
-          </p>
-          <p>
-            <strong>총 호실 수:</strong> {building.unitCnt} 개
-          </p>
+          <p><strong>등록자:</strong> {building.nickname}</p>
+          <p><strong>등록일:</strong> {building.regDate}</p>
+          <p><strong>전체 층수:</strong> {building.totalFloor} 층</p>
+          <p><strong>총 호실 수:</strong> {building.unitCnt} 개</p>
         </div>
 
         {isOwner && (
@@ -94,7 +108,10 @@ export default function OwnerBuildingDetailPage() {
                   hover:bg-primary/40 hover:scale-105 transition transform 
                   font-semibold backdrop-blur border border-primary/30 
                   flex justify-between items-center"
-                onClick={() => navigate(btn.path)}
+                onClick={() => {
+                  if (btn.path) navigate(btn.path);
+                  if (btn.action) btn.action();
+                }}
               >
                 <span className="text-sm">{btn.label}</span>
                 <span className="text-xs text-neutral">▶</span>
@@ -104,7 +121,7 @@ export default function OwnerBuildingDetailPage() {
         )}
       </div>
 
-      {/* ===== 하단 버튼 영역 (고정) ===== */}
+      {/* ===== 하단 버튼 ===== */}
       <div className="flex justify-start items-center h-12 mt-4">
         <button
           className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl 
@@ -115,6 +132,7 @@ export default function OwnerBuildingDetailPage() {
         </button>
       </div>
 
+      {/* ===== 이미지 수정 모달 ===== */}
       {isModalOpen && (
         <BuildingImageModal
           currentImage={building.profileImage}
@@ -123,6 +141,16 @@ export default function OwnerBuildingDetailPage() {
           onSave={(newImage) =>
             setBuilding((prev) => ({ ...prev, profileImage: newImage }))
           }
+        />
+      )}
+
+      {/* ===== 채팅 모달 ===== */}
+      {isChatOpen && currentUser && roomId && (
+        <BuildingChatModal
+          roomId={roomId}
+          user={currentUser}
+          buildingName={building.name}
+          onClose={() => setIsChatOpen(false)}
         />
       )}
     </div>

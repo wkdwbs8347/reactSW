@@ -42,9 +42,11 @@ export default function Login() {
       const res = await api.post("/user/login", { loginId, loginPw });
 
       if (res.data.loginChk === true) {
+        const userId = res.data.loginUser.id;
         setIsLogin(true);
         setterLoginId(loginId);
         setLoginUserNickname(res.data.loginUser.nickname);
+        sessionStorage.setItem("userId", userId);
         showModal("로그인 성공!", () => navigate("/"));
       } else {
         showModal("아이디 또는 비밀번호가 일치하지 않습니다.");

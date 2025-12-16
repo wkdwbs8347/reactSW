@@ -5,12 +5,15 @@ import { FiUser } from "react-icons/fi";
 import { FaCrown } from "react-icons/fa";
 
 export default function ResidentMemberListPage() {
-  const { buildingId } = useParams(); // URL: /resident/building/:buildingId/members
+  const { buildingId } = useParams();
   const navigate = useNavigate();
 
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // ⭐ 로그인한 내 ID (추가)
+  const myUserId = Number(sessionStorage.getItem("userId"));
 
   // 페이지당 아이템, 버튼 블록
   const itemsPerPage = 5;
@@ -56,14 +59,24 @@ export default function ResidentMemberListPage() {
       <h1 className="text-2xl font-bold mb-4">소속 건물 멤버 리스트</h1>
 
       {/* 리스트 영역 */}
-      <div className="space-y-2 mb-6" style={{ minHeight: `${listMinHeight}px` }}>
+      <div
+        className="space-y-2 mb-6"
+        style={{ minHeight: `${listMinHeight}px` }}
+      >
         {/* Owner */}
         {owner && (
           <div
             onClick={() =>
-              navigate(`/mypage/resident/building/${buildingId}/members/${owner.userId}/unit/${owner.unitId}`)
+              navigate(
+                `/mypage/resident/building/${buildingId}/members/${owner.userId}/unit/${owner.unitId}`
+              )
             }
-            className="cursor-pointer bg-primary/25 text-neutral p-2.5 rounded-3xl shadow-lg hover:bg-primary/40 hover:scale-105 transition transform border-2 border-yellow-400 flex justify-between items-center"
+            className={`
+              cursor-pointer bg-primary/25 text-neutral p-2.5 rounded-3xl shadow-lg
+              hover:bg-primary/40 hover:scale-105 transition transform
+              border-2 border-yellow-400 flex justify-between items-center
+              ${owner.userId === myUserId ? "animate-pulse" : ""}
+            `}
           >
             <span className="flex items-center space-x-2">
               <FaCrown className="text-yellow-500 w-5 h-5" />
@@ -80,13 +93,27 @@ export default function ResidentMemberListPage() {
           <FiUser className="text-blue-800 w-6 h-6" />
           <span>Residents</span>
         </h3>
+
         {currentItems.map((m, idx) => (
           <div
             key={idx}
-            onClick={() =>
-              navigate(`/mypage/resident/building/${buildingId}/members/${m.userId}/unit/${m.unitId}`)
+            onClick={
+              m.userId === myUserId
+                ? undefined
+                : () =>
+                    navigate(
+                      `/mypage/resident/building/${buildingId}/members/${m.userId}/unit/${m.unitId}`
+                    )
             }
-            className="cursor-pointer bg-primary/10 text-neutral p-2.5 rounded-3xl shadow hover:bg-primary/30 hover:scale-105 transition transform flex justify-between items-center"
+            className={`
+      bg-primary/10 text-neutral p-2.5 rounded-3xl shadow
+      flex justify-between items-center
+      ${
+        m.userId === myUserId
+          ? "cursor-default opacity-80 border-2 border-primary animate-pulse"
+          : "cursor-pointer hover:bg-primary/30 hover:scale-105 transition transform"
+      }
+    `}
           >
             <span className="flex items-center space-x-2">
               <FiUser className="text-blue-800 w-6 h-6" />
@@ -114,31 +141,32 @@ export default function ResidentMemberListPage() {
             disabled={startPage === 1}
             onClick={() => setCurrentPage(startPage - 1)}
           >
-            <span className="relative top-[1px]">◀</span>
+            ◀
           </button>
 
-          {Array.from({ length: endPage - startPage + 1 }, (_, idx) => startPage + idx).map(
-            (page) => (
-              <button
-                key={page}
-                className={`px-3 py-1 rounded-2xl transition ${
-                  page === currentPage
-                    ? "bg-primary text-white"
-                    : "bg-primary/20 text-neutral hover:bg-primary/40"
-                }`}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            )
-          )}
+          {Array.from(
+            { length: endPage - startPage + 1 },
+            (_, idx) => startPage + idx
+          ).map((page) => (
+            <button
+              key={page}
+              className={`px-3 py-1 rounded-2xl transition ${
+                page === currentPage
+                  ? "bg-primary text-white"
+                  : "bg-primary/20 text-neutral hover:bg-primary/40"
+              }`}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </button>
+          ))}
 
           <button
             className="px-3 py-1 bg-primary/20 text-neutral rounded-2xl hover:bg-primary/40 transition cursor-pointer"
             disabled={endPage === totalPages}
             onClick={() => setCurrentPage(endPage + 1)}
           >
-            <span className="relative top-[1px]">▶</span>
+            ▶
           </button>
         </div>
       </div>

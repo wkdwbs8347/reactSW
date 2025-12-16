@@ -2,7 +2,7 @@ export default function IntroSection() {
   return (
     <section id="intro-section" className="pt-40 text-center max-w-4xl mx-auto px-6">
       <h2 className="text-3xl font-bold mb-6">
-        Sweet Home은 무엇이 다른가요?
+        Sweet Home은 어떤 서비스 인가요?
       </h2>
 
       <p className="text-neutral/70 leading-relaxed text-lg">

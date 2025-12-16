@@ -11,25 +11,36 @@ export default function ResidentMemberDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false); // 모달 열림 상태
 
-  useEffect(() => {
-    if (!unitId) return; 
-    const fetchMember = async () => {
-      try {
-        const res = await api.get("/buildingMember/detail", {
-          params: { id : buildingId, userId, unitId },
+useEffect(() => {
+  if (!buildingId || !userId) return;
+
+  const fetchMember = async () => {
+    try {
+      let res;
+      if (!unitId || unitId === "null") {
+        // owner일 경우 다른 API 호출
+        res = await api.get("/buildingMember/ownerDetail", {
+          params: { id: Number(buildingId), userId: Number(userId) },
         });
-        setMember(res.data);
-      } catch (err) {
-        console.error("멤버 상세 조회 실패:", err);
-      } finally {
-        setLoading(false);
+      } else {
+        // 일반 입주자
+        res = await api.get("/buildingMember/detail", {
+          params: { id: Number(buildingId), userId: Number(userId), unitId: Number(unitId) },
+        });
       }
-    };
-    fetchMember();
-  }, [buildingId, userId, unitId]);
+      setMember(res.data);
+    } catch (err) {
+      console.error("멤버 상세 조회 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchMember();
+}, [buildingId, userId, unitId]);
 
   if (loading) return <p className="text-center mt-10">로딩중...</p>;
-  if (!member) return <p className="text-center mt-10">멤버 정보를 찾을 수 없습니다.</p>;
+  if (!member) return <p className="text-center mt-10">아직 해당 건물의 멤버로 등록되지 않았습니다.</p>;
 
   // 메뉴 버튼 핸들러
   const handleReport = () => navigate(`/mypage/resident/${unitId}/report`);

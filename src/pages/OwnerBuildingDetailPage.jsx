@@ -60,7 +60,7 @@ export default function OwnerBuildingDetailPage() {
   const ownerButtons = [
     { label: "멤버 신청목록", path: `/mypage/building/apply-list?buildingId=${id}` },
     { label: "멤버 리스트", path: `/mypage/building/${id}/members` },
-    { label: "채팅방", action: () => setIsChatOpen(true) },
+    { label: "멤버 채팅방", action: () => setIsChatOpen(true) },
     { label: "신고현황", path: `/mypage/report/${id}` },
     { label: "월간 보고서", path: `/mypage/monthly-report/${id}` },
     { label: "전체공지 발송", path: `/mypage/notice/${id}` },

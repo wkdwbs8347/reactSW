@@ -217,7 +217,7 @@ const handleSaveEdit = async (newContent) => {
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="flex-1 p-2 border rounded"
+                className="bg-white flex-1 p-2 border rounded"
                 placeholder="메시지를 입력하세요..."
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
               />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/axios";
+import BuildingChatModal from "../components/BuildingChatModal";
 
 export default function ResidentBuildingDetailPage() {
   const [searchParams] = useSearchParams();
@@ -10,6 +11,11 @@ export default function ResidentBuildingDetailPage() {
   const [building, setBuilding] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // ⭐ 모달 관련 상태
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [roomId, setRoomId] = useState(null); // 🟢 roomId 상태 추가
+
   useEffect(() => {
     if (!unitId) return;
 
@@ -18,14 +24,27 @@ export default function ResidentBuildingDetailPage() {
         const res = await api.get(`/building/detail`, {
           params: { buildingId, unitId },
         });
+
         setBuilding(res.data.building);
+        setRoomId(res.data.roomId); // 🟢 백엔드에서 전달한 roomId 저장
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
+
+    const fetchUser = async () => {
+      try {
+        const res = await api.get("/user/me");
+        setCurrentUser(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchBuilding();
+    fetchUser();
   }, [buildingId, unitId]);
 
   if (loading) return <p className="text-center mt-10">로딩중...</p>;
@@ -37,10 +56,22 @@ export default function ResidentBuildingDetailPage() {
     );
 
   const buttons = [
-    { label: "멤버 리스트", path: `/mypage/resident/building/${buildingId}/members` },
-    { label: "멤버 채팅방", path: `/mypage/resident/${unitId}/chat-list` },
-    { label: "신고 내역", path: `/mypage/resident/${unitId}/report-list` },
-    { label: "받은 신고 내역", path: `/mypage/resident/${unitId}/report-received` },
+    {
+      label: "멤버 리스트",
+      path: `/mypage/resident/building/${buildingId}/members`,
+    },
+    {
+      label: "멤버 채팅방",
+      action: () => setIsChatOpen(true), // 모달 열기
+    },
+    {
+      label: "신고 내역",
+      path: `/mypage/resident/${unitId}/report-list`,
+    },
+    {
+      label: "받은 신고 내역",
+      path: `/mypage/resident/${unitId}/report-received`,
+    },
   ];
 
   return (
@@ -59,10 +90,18 @@ export default function ResidentBuildingDetailPage() {
         />
 
         <div className="mt-4 space-y-2 text-gray-700">
-          <p><strong>거주자:</strong> {building.nickname}</p>
-          <p><strong>멤버등록일:</strong> {building.regDate}</p>
-          <p><strong>층:</strong> {building.floor} 층</p>
-          <p><strong>호수:</strong> {building.unitNumber} 호</p>
+          <p>
+            <strong>거주자:</strong> {building.nickname}
+          </p>
+          <p>
+            <strong>멤버등록일:</strong> {building.regDate}
+          </p>
+          <p>
+            <strong>층:</strong> {building.floor} 층
+          </p>
+          <p>
+            <strong>호수:</strong> {building.unitNumber} 호
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mt-4">
@@ -72,7 +111,10 @@ export default function ResidentBuildingDetailPage() {
               className="bg-primary/20 text-neutral w-full p-4 rounded-3xl shadow-lg
                          hover:bg-primary/40 hover:scale-105 transition transform
                          font-semibold backdrop-blur border border-primary/30 flex justify-between items-center"
-              onClick={() => navigate(btn.path)}
+              onClick={() => {
+                if (btn.path) navigate(btn.path);
+                if (btn.action) btn.action();
+              }}
             >
               <span>{btn.label}</span>
               <span className="text-sm text-neutral">▶</span>
@@ -91,6 +133,15 @@ export default function ResidentBuildingDetailPage() {
           ◀ 뒤로
         </button>
       </div>
+
+      {/* ===== 채팅 모달 ===== */}
+      {isChatOpen && currentUser && roomId && (
+        <BuildingChatModal
+          roomId={roomId} // 🟢 백엔드에서 받아온 실제 roomId 전달
+          user={currentUser}
+          onClose={() => setIsChatOpen(false)}
+        />
+      )}
     </div>
   );
 }
